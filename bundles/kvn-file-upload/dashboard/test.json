@@ -1,0 +1,171 @@
+{
+    "general": {
+        "gameTitle": "1Первый четвертьфинал",
+        "date": "2026-03-20",
+        "host": "Андрей Андреев",
+        "currentContest": 0,
+        "activeTitle": {
+            "name": "",
+            "description": "",
+            "isOnAir": false,
+            "autoOut": 0,
+            "draftName": "",
+            "draftDescription": ""
+        }
+    },
+    "juries": [
+        {
+            "id": 0,
+            "name": "Юрий Апакидзе",
+            "description": ""
+        },
+        {
+            "id": 1,
+            "name": "Матвей Красношапко",
+            "description": ""
+        },
+        {
+            "id": 2,
+            "name": "Василий Шевлоков",
+            "description": ""
+        },
+        {
+            "id": 3,
+            "name": "Ирина Валерьевна Яблочкина",
+            "description": ""
+        },
+        {
+            "id": 4,
+            "name": "Артём Кощеев",
+            "description": ""
+        },
+        {
+            "id": 5,
+            "name": "Мария Штейн",
+            "description": ""
+        },
+        {
+            "id": 6,
+            "name": "Дмитрий Артеев",
+            "description": ""
+        }
+    ],
+    "teams": [
+        {
+            "id": 0,
+            "name": "С привкусом",
+            "description": "ВШЭиБ + ИПАМ + ВШП",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 1,
+            "name": "Иронька",
+            "description": "ВШСГН + ВШКМиС",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 2,
+            "name": "Доктор Ливси",
+            "description": "ИПАМ + ВШЭ",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 3,
+            "name": "Рокс",
+            "description": "ИПАМ + ВШМ + ВШКМиС",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 4,
+            "name": "Квинтэссенция",
+            "description": "ВШСГН",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 5,
+            "name": "Капитаны",
+            "description": "Капитаны",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 6,
+            "name": "Рэд флаг",
+            "description": "ВШМ + ВШФ",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 7,
+            "name": "А что началось-то?",
+            "description": "ВШСГН",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 8,
+            "name": "Договоримся",
+            "description": "ВШКИ + Форсайт",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 9,
+            "name": "ГавМяу",
+            "description": "МГАВМиБ – МВА имени Скрябина",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 10,
+            "name": "Twenty one палец",
+            "description": "МЭИ",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 11,
+            "name": "Три четверки",
+            "description": "Школа 444",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        },
+        {
+            "id": 12,
+            "name": "Витус Беринг",
+            "description": "Петропавловск-Камчатский",
+            "sum": 0,
+            "current": 0,
+            "votes": 0
+        }
+    ],
+    "contests": [
+        {
+            "id": 0,
+            "name": "Приветствие",
+            "max": 7
+        },
+        {
+            "id": 1,
+            "name": "Разминка",
+            "max": 5
+        }
+    ]
+}

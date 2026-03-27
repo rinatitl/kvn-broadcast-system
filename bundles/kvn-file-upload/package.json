@@ -1,0 +1,30 @@
+{
+  "name": "kvn-file-upload",
+  "version": "1.0.0",
+  "description": "Система управления данными КВН",
+  "author": "Rinat Farkhutdinov <Rinat.it2016@mail.ru>",
+  "nodecg": {
+    "compatibleRange": "^2.0.0",
+    "dashboardPanels": [
+      {
+        "name": "kvn-file",
+        "title": "Конфигурация игры КВН",
+        "width": 6,
+        "file": "kvn-file-dashboard.html",
+        "headerColor": "#f9961f"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "master.html",
+        "width": 1920,
+        "height": 1080,
+        "singleInstance": false
+      }
+    ]
+  },
+  "license": "MIT",
+  "dependencies": {
+    "atem-connection": "^3.9.0"
+  }
+}

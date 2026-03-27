@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+		<style>
+			body {
+				font-family: "Open Sans", serif;
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				/* background: black; */
+				/* background: #00F; */
+				/*background-image: url('example2.jpg');
+				background-repeat: no-repeat;
+				background-size: cover;*/
+			}
+			/*.example-image {
+				position: absolute;
+				width: 1920px;
+				opacity: 0.5;
+			}*/
+			.lower-third {
+				width: 960px;
+				height: 140px;
+				background: none;
+				position: absolute;
+				top: 820px;
+				display: flex;
+				align-items: center;
+				color: white;
+			}
+			.name {
+				font-size: 40px;
+				margin-left: 320px;
+				line-height: 50px;
+				padding-right: 10px;
+			}
+			/* .description {
+				position: absolute;
+				top: -30px;
+				left: 340px;
+				font-size: 20px;
+				line-height: 50px;
+				opacity: 1;
+				padding: 0px 10px;
+				background: rgba(249, 150, 31, 1);
+			} */
+			.description {
+				position: absolute;
+				top: -40px;
+				left: 340px;
+				font-size: 25px;
+				line-height: 50px;
+				opacity: 1;
+				padding: 0px 10px;
+				background: rgba(249, 150, 31, 1);
+			}
+			.logo {
+				width: 250px;
+				position: absolute;
+				top: -70px;
+				left: 40px;
+				z-index: 40;
+			}
+			.toggle {
+				position: absolute;
+				top: 700px;
+				left: 40px;
+			}
+			.lt-background {
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				background: rgba(249, 150, 31, .5);
+			}
+			#viewport {
+				width: 1920px;
+				height: 1080px;
+				position: relative;
+				overflow: hidden;
+				background: black !important;
+			}
+			#viewport.key-mode {
+				background: black !important;
+			}
+			#viewport.key-mode > * {
+				filter: brightness(0) invert(1) !important;
+				backface-visibility: hidden;
+  				transform: translateZ(0);
+			}
+		</style>
+		<script type="module" src="./index.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<div id="viewport" :class="{ 'key-mode': isKeyMode }">
+				<div class="lower-third">
+					<img src="logo.png" class="logo revealLogo" alt="">
+					<div class="lt-background revealBackground">&nbsp;</div>
+					<span id="kvn-name" class="name revealText">{{ activeTitle.name }}</span>
+					<div class="description revealDescription"><span id="kvn-description">{{ activeTitle.description }}</span></div>
+				</div>
+			</div>
+			<!-- <div class="toggle">
+				<button @click="animateIn()" class="btn btn-primary">Animate In</button>
+				<button @click="animateOut()" class="btn btn-primary">Animate Out</button>
+			</div> -->
+			
+		</div>
+
+		<!-- <img src="example.jpg" alt="" class="example-image"> -->
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+	</body>
+</html>

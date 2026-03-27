@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+		<style>
+			body {
+				font-family: "Open Sans", serif;
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				/* background: #fff; */
+				background: url(bg.png);
+			}
+			html {
+				width: 1920px;
+				height: 1080px;
+				/* background-image: url('example.png');
+				background-repeat: no-repeat;
+				background-size: cover; */
+			}
+			#app {
+				opacity: 1;
+			}
+			.header {
+				/* background: rgba(249, 150, 31, 1); */
+				background: #C8470E;
+				color: white;
+				position: absolute;
+				top: 160px;
+				left: calc((1920px - 1500px)/2);
+				width: 1500px;
+				display: flex;
+				align-items: center;
+				font-weight: bold;
+				overflow: hidden;
+				/* opacity: 0.5; */
+			}
+			.logo {
+				margin: 0;
+				margin-left: 20px;
+				width: 150px;
+			}
+			.logo img {
+				width: 100%;
+			}
+			.game-name {
+				font-size: 100px;
+				margin: auto;
+			}
+			.game-name div {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+				height: 100%;
+				text-transform: uppercase;
+				/* margin-top: 10px; */
+			}
+			.legend {
+				
+				color: white;
+				position: absolute;
+				display: flex;
+				justify-content: space-between;
+				
+				top: 320px;
+				left: calc((1920px - 1500px)/2);
+				width: 1500px;
+				height: 60px;
+				font-size: 30px;
+				font-weight: 700;
+			}
+			.left-legend, .right-legend {
+				/* background: rgb(203, 119, 16); */
+				background: #d86e0b;
+				align-items: center;
+				height: 60px;
+				width: calc(50% - 2.5px);
+				display: flex;
+				justify-content: space-between;
+			}
+			.left-legend p, .right-legend p {
+				margin: 0;
+				padding: 0;
+				width: 150px;
+				text-align: center;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			/* .left-legend p:first-child, .right-legend p:first-child {
+				width: 70px;
+			}  */
+			.left-legend p:nth-child(2), .right-legend p:nth-child(2) {
+				width: 575px;
+				text-align: center;
+			}
+			.left-legend p:last-child, .right-legend p:last-child {
+				font-weight: 700;
+			}
+			.elements {
+				position: absolute;
+				top: 385px;
+				left: calc((1920px - 1500px)/2);
+				width: 1500px;
+				height: calc(6 * 70px + 7 * 5px);
+				display: flex;
+				flex-direction: column;
+				flex-wrap: wrap;
+				align-content: space-between;
+			}
+			.element {
+				background: #F4EBCA;
+				color: #480001;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: calc(50% - 2.5px);
+				height: calc(455px / 6 - 10px);
+				font-size: 30px;
+				font-weight: 500;
+				line-height: 60px;
+				margin-bottom: 5px;
+				overflow: hidden;
+			}
+			.element p {
+				margin: 0;
+				padding: 0;
+				text-align: center;
+				/* background: #000; */
+				width: 150px;
+				font-weight: bold;
+			}
+			/* .element p:first-child {
+				width: 70px;
+			} */
+			.element p:nth-child(2) {
+				/* background: #000; */
+				/* width: 575px; */
+				width: 640px;
+				text-align: center;
+			}
+			.element p:last-child {
+				font-weight: 700;
+			}
+			.fade-move,
+			.fade-enter-active,
+			.fade-leave-active {
+				transition: all 1s cubic-bezier(0.55, 0, 0.1, 1);
+			}
+			.fade-enter-from,
+			.fade-leave-to {
+				opacity: 0;
+				transform: translate(0, 20px);
+			}
+			.fade-leave-active {
+				position: absolute;
+			}
+			.target {
+				font-kerning: none;
+			}
+			.element {
+				transition-delay: calc(var(--idx) * .1s)
+			}
+			/* .kicked-team {
+				background: #d3cdb7;
+			} */
+		</style>
+		<script type="module" src="./index.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<!-- <button @click="playIn()">play in</button>
+			<button @click="playOut()">play out</button> -->
+			<transition @enter="onEnter" @leave="onLeave" :css="false">
+				<div v-if="scoreboardStatus.isOnAir" class="scoreboard-container">
+					<div class="header">
+						<div class="logo">
+							<img src="logo.png" alt="">
+						</div>
+						<div class="game-name">
+							<div id="game-name" class="target" style="font-size: 80px;">{{ scoreboardStatus.gameTitle }}</div>
+						</div>
+					</div>
+					<div class="legend">
+						<div class="left-legend">
+							<p>Место</p>
+							<p>Команда</p>
+							<!-- <p v-for="contest in vueContests" class="contests">{{ contest.name }}</p> -->
+							<p>Баллы</p>
+						</div>
+						<div class="right-legend">
+							<p>Место</p>
+							<p>Команда</p>
+							<!-- <p v-for="contest in vueContests" class="contests">{{ contest.name }}</p> -->
+							<p>Баллы</p>
+						</div>
+					</div>
+					<transition-group tag="div" name="fade" class="elements">
+						<div class="element item" v-for="(team, index) in sortedTeams" :id = "'team'+team.id" class="item" :key="team.id" :style="{ height: elementHeight }" :class="{ 'is-highlighted': highlightedTeams.includes(team.id) }">
+							<p> {{ index + 1 }} </p>
+							<!-- <p> {{ sortedVueTeams.length - vueActiveContest * 2 }} </p> -->
+							<p>{{ team.name }}</p>
+							<p :id="'teamSum'+team.id"> {{ animatedSums[team.id] !== undefined ? animatedSums[team.id] : team.sum }} </p>
+						</div>
+					</transition-group>
+				</div>
+			</transition>
+		</div>
+
+		<!-- <img src="example.jpg" alt="" class="example-image"> -->
+		<script src="https://unpkg.com/split-type"></script>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+	</body>
+</html>

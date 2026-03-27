@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"/>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+		<style>
+			body {
+				background: #2f3b52;
+			}
+			#app {
+				padding: 10px;
+			}
+			hr {
+				border-top: 2px solid #fff;
+			}
+			#status-sb {
+				width: 100%;
+				height: 20px;
+				transition: 1s;
+			}
+			#status-sb.on-air {
+				background: red;
+			}
+			#status-sb.ready {
+				background: green;
+			}
+			#status-sb.offline {
+				background: #666;
+			}
+			.text-danger {
+				color: red;
+			}
+			.mark-input {
+				width: calc(100% / 10);
+			}
+			hr {
+				margin: 15px 0 10px 0;
+			}
+			.accordion-button:not(.collapsed) {
+				color: white;
+				background-color: #171a1e;
+			}
+			.pointer-header {
+				cursor: pointer;
+			}
+			.pointer-header:hover {
+				text-decoration: underline;
+			}
+			.fade-enter-active, .fade-leave-active {
+				transition: opacity 0.2s;
+			}
+			.fade-enter-from, .fade-leave-to {
+				opacity: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<div class="row">
+				<div class="col">
+					<h2>Управление состояниями</h2>
+					<div id="status-sb" class="status-bar" :class="tallyStatus">&nbsp;</div>
+					<div class="btn-toolbar mt-3" role="toolbar">
+						<div class="btn-group btn-group-lg me-2" role="group">
+							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="takeToAir"><i class="bi bi-eye"></i> Prepare</button>
+							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="toggleAir(true)"><i class="bi bi-play-fill" ></i> Play In</button>
+							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="toggleAir(false)"><i class="bi bi-arrow-bar-right"></i> Play Out</button>
+						</div>
+					</div>
+					<button type="button" class="btn btn-danger btn-lg mt-4" @click="clearScreen"><i class="bi bi-x-circle"></i> Clear screen</button>
+				</div>
+			</div>
+			<hr/>
+			<!-- <div class="row">
+				<div class="contests col">
+					<h3 class="mt-2">Конкурсы</h3>
+					<div class="btn-group" id="juries-list">
+						<button type="button" class="btn btn-light disabled placeholder" v-if="vueContests == ''">
+							Нет данных
+						</button>
+						<button type="button" class="btn btn-light" :class="contest.id == vueActiveContest ? 'active' : ''" aria-current="true" v-for="contest in vueContests" :key="contest.id" @click="contestsClick(contest.id)" v-else>
+							{{ contest.name }}
+						</button>
+					</div>
+				</div>
+			</div> -->
+
+			<div class="row">
+				<div class="contests col">
+					<h3 class="mt-2">Ввести данные</h3>
+					<div class="input-group">
+						<input type="text" class="form-control " v-model="rawImportString">
+						<button class="btn btn-light" type="button" @click="parseGoogleScores"><i class="bi bi-arrow-right"></i></button>
+					</div>
+				</div>
+			</div>
+
+			<transition name="fade">
+				<div class="modal show d-block" tabindex="-1" v-if="showConfirmModal" style="background-color: rgba(0,0,0,0.5);" @keyup.enter="confirmAndDistribute">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="exampleModalLabel">Ввести данные из строки</h1>
+								<button type="button" class="btn-close" @click="showConfirmModal = false"></button>
+							</div>
+							<div class="modal-body">
+								<!-- <div class="alert alert-danger d-none" role="alert" id="distribute-modal-error-div">
+									<div id="distribute-modal-error-p"></div>
+								</div> -->
+								<table class="table table-sm table-borderless">
+									<tr>
+										<th>Команда</th>
+										<th>Прибавляем</th>
+									</tr>
+									<tr v-for="item in confirmListData" :key="item.id">
+										<td>{{ item.name }}</td>
+										<td>{{ item.added }}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" @click="showConfirmModal = false">Отмена</button>
+								<button type="button" class="btn btn-secondary" @click="confirmAndDistribute">Ввести данные</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</transition>
+
+			<transition name="fade">
+				<div class="modal show d-block" tabindex="-1" v-if="showSimulationModal" style="background-color: rgba(0,0,0,0.5);" @keyup.enter="showSimulationModal = false">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="emulateModalLabel">Предпросмотр итога вывода</h1>
+								<button type="button" class="btn-close" @click="showSimulationModal = false"></button>
+							</div>
+							<div class="modal-body">
+								<table class="table table-sm table-borderless">
+									<tr>
+										<th>Команда</th>
+										<th>Баллы</th>
+									</tr>
+									<tr v-for="team in simulationResults" :key="team.id">
+										<td>{{ team.name }}</td>
+										<td>{{ team.sum }}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" @click="showSimulationModal = false">Закрыть</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</transition>
+
+			<div class="row">
+				<div class="marks col">
+					<div class="row mt-3 mb-2">
+						<h3 class="col-sm-10">Итоговые баллы</h3>
+						<div class="col-sm-1">
+							<button type="button" class="btn btn-outline-light" @click="adminSort = true" v-if="!adminSort" title="Сортировать по кол-ву баллов"><i class="bi bi-sort-down"></i></button>
+							<button type="button" class="btn btn-light" @click="adminSort = false" v-if="adminSort" title="Отключить сортировку"><i class="bi bi-sort-down"></i></button>
+						</div>
+						<div class="col-sm-1">
+							<button type="button" class="btn btn-warning" @click="showSimulationModal = true" title="Эмулировать таблицу"><i class="bi bi-play"></i></button>
+						</div>
+					</div>
+					<button type="button" class="btn btn-secondary disabled placeholder" v-if="displayTeams == ''">
+						Нет данных
+					</button>
+					<div class="row" v-else>
+						<div class="col-sm-4">
+							<h5>Команда</h5>
+						</div>
+						<div class="col-sm-2">
+							<h5 class="pointer-header" @click="clearVotes">Голосов <i class="bi bi-x-circle"></i></h5>
+						</div>
+						<div class="col-sm-3">
+							<h5 class="pointer-header" @click="clearSums">Итого баллов <i class="bi bi-0-circle"></i></h5>
+						</div>
+						<div class="col-sm-3">
+							<h5 class="pointer-header" @click="clearAddingPoints">Добавить баллы <i class="bi bi-x-circle"></i></h5>
+						</div>
+					</div>
+					<div id="teamList">
+						<div class="marks-controls row mb-1" v-for="team in displayTeams" :key="team.id">
+							<div class="col-sm-4">
+								<p>{{ team.name }}</p>
+							</div>
+							<div class="col-sm-2">
+								<input type="number" class="form-control form-input-focus-votes" v-model.number="team.votes">
+							</div>
+							<div class="col-sm-3">
+								<input type="number" class="form-control" v-model.number.lazy="team.sum" @change="updateTeams">
+							</div>
+							<div class="col-sm-3">
+								<div class="btn-toolbar" role="toolbar">
+									<div class="btn-group btn-group-sm">
+										<input type="number" class="form-control form-input-focus-points" style="width: 100px;" v-model="addingPoints[team.id]" @keyup.enter="applyPoints(team.id)">
+										<button type="button" class="btn btn-secondary" style="font-size: 1.2rem;" @click="applyPoints(team.id)"><i class="bi bi-plus"></i></button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script type="module" src="./kvn-scoreboard.js"></script>
+	</body>
+</html>

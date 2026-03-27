@@ -1,0 +1,27 @@
+{
+  "name": "kvn-lowerthird",
+  "version": "1.0.0",
+  "description": "Система управления данными КВН: управление титрами",
+  "author": "Rinat Farkhutdinov <Rinat.it2016@mail.ru>",
+  "nodecg": {
+    "compatibleRange": "^2.0.0",
+    "dashboardPanels": [
+      {
+        "name": "kvn-lowerthird",
+        "title": "Управление титрами КВН",
+        "width": 6,
+        "file": "kvn-lowerthird.html",
+        "headerColor": "#f9961f"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "index.html",
+        "width": 1920,
+        "height": 1080,
+        "singleInstance": false
+      }
+    ]
+  },
+  "license": "MIT"
+}

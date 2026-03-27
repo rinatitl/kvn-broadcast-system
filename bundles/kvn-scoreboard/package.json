@@ -1,0 +1,27 @@
+{
+  "name": "kvn-scoreboard",
+  "version": "1.0.0",
+  "description": "Система управления данными КВН: Управление таблицей с результатами",
+  "author": "Rinat Farkhutdinov <Rinat.it2016@mail.ru>",
+  "nodecg": {
+    "compatibleRange": "^2.0.0",
+    "dashboardPanels": [
+      {
+        "name": "kvn-scoreboard",
+        "title": "Управление таблицей с результатами КВН",
+        "width": 6,
+        "file": "kvn-scoreboard.html",
+        "headerColor": "#f9961f"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "index.html",
+        "width": 1920,
+        "height": 1080,
+        "singleInstance": false
+      }
+    ]
+  },
+  "license": "MIT"
+}

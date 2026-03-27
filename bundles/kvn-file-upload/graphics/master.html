@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+	<head>
+		<meta charset="UTF-8" />
+        <title>master.html</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"/>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+		<style>
+			#app, .viewport {
+                width: 1920px;
+                height: 1080px;
+                background: black;
+                overflow: hidden;
+                position: relative;
+            }
+            .bundle-frame {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border: none;
+                opacity: 0;
+                pointer-events: none;
+                /* Плавное появление/исчезновение за 0.4 секунды */
+                transition: opacity 0.4s ease-in-out; 
+            }
+            .bundle-frame.visible {
+                opacity: 1;
+                pointer-events: auto;
+            }
+		</style>
+	</head>
+	<body>
+		<div id="app">
+            <div class="viewport" :class="{ 'key-mode': isKeyMode }">
+
+                <iframe 
+                    :src="getBundleUrl('kvn-lowerthird')" 
+                    class="bundle-frame" 
+                    :class="{ 'visible': activeScene === 'lowerthird' }">
+                </iframe>
+
+                <iframe 
+                    :src="getBundleUrl('kvn-scoreboard')"
+                    class="bundle-frame" 
+                    :class="{ 'visible': activeScene === 'scoreboard' }">
+                </iframe>
+
+            </div>
+        </div>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+		<script type="module" src="./master.js"></script>
+	</body>
+</html>
