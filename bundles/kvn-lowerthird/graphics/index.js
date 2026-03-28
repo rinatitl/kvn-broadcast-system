@@ -1,8 +1,16 @@
 const generalRep = nodecg.Replicant('general-information', 'kvn-file-upload');
 const lowerthirdStatusRep = nodecg.Replicant('lowerthird-status');
 
+let ltTimeline;
+
 function animateIn() {
-	gsap.fromTo(
+	if (ltTimeline) {
+        ltTimeline.kill();
+    }
+
+	ltTimeline = gsap.timeline({ overwrite: 'all' });
+
+	ltTimeline.fromTo(
 		'.revealLogo',
 		{
 			autoAlpha: 0,
@@ -20,7 +28,7 @@ function animateIn() {
 			ease: 'back',
 		}
 	);
-	gsap.fromTo(
+	ltTimeline.fromTo(
 		'.revealBackground',
 		{
 			clipPath: 'polygon(17% 0%, 17% 0%, 17% 200%, 17% 200%)',
@@ -31,9 +39,10 @@ function animateIn() {
 			autoAlpha: 1,
 			duration: 1,
 			ease: 'power2.inOut',
-		}
+		},
+		"<"
 	);
-	gsap.fromTo(
+	ltTimeline.fromTo(
 		'.revealText',
 		{
 			clipPath: 'polygon(0% 0%, 0% 0%, 0% 200%, 0% 200%)',
@@ -46,9 +55,10 @@ function animateIn() {
 			autoAlpha: 1,
 			duration: 1.5,
 			ease: 'power2.inOut',
-		}
+		},
+		"<"
 	);
-	gsap.fromTo(
+	ltTimeline.fromTo(
 		'.revealDescription',
 		{
 			clipPath: 'polygon(0% 0%, 0% 0%, 0% 200%, 0% 200%)',
@@ -62,11 +72,15 @@ function animateIn() {
 			delay: 0.5,
 			duration: 1,
 			ease: 'power2.inOut',
-		}
+		},
+		"<"
 	);
 }
 
+const ltElements = ['.revealLogo', '.revealBackground', '.revealText', '.revealDescription'];
+
 function animateOut() {
+	gsap.killTweensOf(ltElements);
 	gsap.to(
 		'.revealDescription',
 		{
@@ -75,11 +89,8 @@ function animateOut() {
 			x: 70,
 		}
 	);
-	gsap.fromTo(
+	gsap.to(
 		'.revealText',
-		{
-			clipPath: 'polygon(0% 0%, 100% 0%, 100% 200%, 0% 200%)',
-		},
 		{
 			clipPath: 'polygon(10% 0%, 10% 0%, 10% 200%, 10% 200%)',
 			autoAlpha: 0,
@@ -106,11 +117,8 @@ function animateOut() {
 		},
 		">-0.2"
 	);
-	gsap.fromTo(
+	gsap.to(
 		'.revealBackground',
-		{
-			clipPath: 'polygon(0% 0%, 100% 0%, 100% 200%, 0% 200%)',
-		},
 		{
 			clipPath: 'polygon(50% 0%, 50% 0%, 50% 200%, 50% 200%)',
 			duration: 0.7,
@@ -120,6 +128,8 @@ function animateOut() {
 }
 
 function clearingScreen() {
+	gsap.killTweensOf(ltElements);
+	gsap.set(ltElements, { clearProps: "all" });
 	gsap.set(
 		'.revealDescription',
 		{
@@ -136,8 +146,7 @@ function clearingScreen() {
 			autoAlpha: 0,
 		}
 	);
-	var logoTL = gsap.timeline();
-	logoTL.set(
+	gsap.set(
 		'.revealLogo',
 		{
 			autoAlpha: 0,
