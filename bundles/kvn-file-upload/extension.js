@@ -20,13 +20,6 @@ module.exports = function (nodecg) {
 			date: "",
 			host: "",
 			currentContest: 0, 
-            activeTitle: {
-                name: '',
-                description: '',
-                isOnAir: false,
-                autoOut: 0,
-                timerVisual: 0
-            }
         }, 
         persistent: true 
     });

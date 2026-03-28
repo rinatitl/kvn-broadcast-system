@@ -39,8 +39,8 @@
 				<div class="col-7">
 					<h2>Управление состояниями</h2>
 					<div id="status-lt" class="status-bar" :class="tallyStatus">&nbsp;</div>
-					<div v-if="vueGeneral.activeTitle.isOnAir && vueGeneral.activeTitle.timerVisual > 0" class="timer-badge">
-						Уход через: <strong>{{ vueGeneral.activeTitle.timerVisual }}s</strong>
+					<div v-if="lowerthirdStatus.isOnAir && lowerthirdStatus.timerVisual > 0" class="timer-badge">
+						Уход через: <strong>{{ lowerthirdStatus.timerVisual }}s</strong>
 					</div>
 					<div class="btn-toolbar mt-3" role="toolbar">
 						<div class="btn-group btn-group-lg me-2" role="group">
@@ -64,9 +64,9 @@
 				<div class="col">
 					<h2>Отправлено в титры</h2>
 					<label for="kvn-input-name" class="form-label mt-1">Главная подпись</label>
-					<p id="text-lt" class="fw-normal fs-5" style="color: white">{{ vueGeneral.activeTitle.name }}</p>
+					<p id="text-lt" class="fw-normal fs-5" style="color: white">{{ lowerthirdStatus.name }}</p>
 					<label for="kvn-input-description" class="form-label mt-1">Описание</label>
-					<p id="description-lt" class="fw-normal fs-5" style="color: white">{{ vueGeneral.activeTitle.description }}</p>
+					<p id="description-lt" class="fw-normal fs-5" style="color: white">{{ lowerthirdStatus.description }}</p>
 				</div>
 			</div>
 			<hr />

@@ -1,4 +1,5 @@
 const generalRep = nodecg.Replicant('general-information', 'kvn-file-upload');
+const lowerthirdStatusRep = nodecg.Replicant('lowerthird-status');
 
 function animateIn() {
 	gsap.fromTo(
@@ -160,13 +161,14 @@ const { createApp } = Vue;
 createApp({
 	data() {
 		return {
-			activeTitle: {
+			lowerthirdStatus: {
 				name: '',
 				description: '',
 				isOnAir: false,
 				autoOut: 0,
-				draftName: '',
-				draftDescription: ''
+				timerVisual: 0,
+                type: null,
+                id: null,
 			},
 			autoOutTimer: null,
 			localIsOnAir: false,
@@ -178,8 +180,16 @@ createApp({
 			animateIn();
 		},
 		playOut() {
-			clearInterval(this.autoOutTimer);
+			if (this.autoOutTimer) {
+				clearInterval(this.autoOutTimer);
+				this.autoOutTimer = null;
+			}
+			if (lowerthirdStatusRep && lowerthirdStatusRep.value) {
+				lowerthirdStatusRep.value.isOnAir = false;
+				lowerthirdStatusRep.value.timerVisual = 0;
+			}
 			animateOut();
+			this.localIsOnAir = false;
 		},
 		clearScreen() {
 			clearingScreen();
@@ -188,51 +198,56 @@ createApp({
 				clearInterval(this.autoOutTimer);
 				this.autoOutTimer = null;
 			}
+			if (lowerthirdStatusRep && lowerthirdStatusRep.value) {
+				lowerthirdStatusRep.value.isOnAir = false;
+				lowerthirdStatusRep.value.timerVisual = 0;
+			}
 		},
 		startTimer(sec) {
             animateIn();
-			generalRep.value.activeTitle.timerVisual = sec;
+			lowerthirdStatusRep.value.timerVisual = sec;
 
 			this.autoOutTimer = setInterval(() => {
-				if (generalRep.value.activeTitle.timerVisual > 1) {
-					generalRep.value.activeTitle.timerVisual--;
+				if (lowerthirdStatusRep.value.timerVisual > 1) {
+					lowerthirdStatusRep.value.timerVisual--;
 				} else {
 					// Выключаем статус. 
 					// ВАЖНО: это изменение прилетит обратно в mounted, 
 					// попадет в блок else if (at.isOnAir === false) 
 					// и ТАМ вызовет playOut().
-					generalRep.value.activeTitle.isOnAir = false;
-					generalRep.value.activeTitle.timerVisual = 0;
+					lowerthirdStatusRep.value.isOnAir = false;
+					lowerthirdStatusRep.value.timerVisual = 0;
 					clearInterval(this.autoOutTimer);
 				}
 			}, 1000);
         },
 	},
 	mounted() {
-		this.clearScreen();
+		clearingScreen();
 		nodecg.listenFor('force-reset', () => {
 			console.log("ПОЛУЧЕН СИГНАЛ: Мгновенное скрытие");
 			this.clearScreen();
 		});
-		NodeCG.waitForReplicants(generalRep).then(() => {
-			generalRep.on('change', (newVal) => {
-				if (!newVal || !newVal.activeTitle) return;
+		NodeCG.waitForReplicants(lowerthirdStatusRep).then(() => {
+			this.clearScreen();
+			lowerthirdStatusRep.on('change', (newVal) => {
+				if (!newVal) return;
 
-				const at = newVal.activeTitle;
+				this.lowerthirdStatus = JSON.parse(JSON.stringify(newVal));
 
-				if (at.isOnAir && !this.localIsOnAir) {
+				if (newVal.isOnAir === true && this.localIsOnAir === false) {
 					this.localIsOnAir = true;
 
-					if (at.autoOut > 0) {
+					if (newVal.autoOut > 0) {
 						// Запускаем ТОЛЬКО таймер (он сам внутри вызовет анимацию)
-						this.startTimer(at.autoOut);
+						this.startTimer(newVal.autoOut);
 					} else {
 						// Запускаем ТОЛЬКО анимацию (ручной режим)
 						this.playIn();
 					}
 				}
 
-				else if (!at.isOnAir && this.localIsOnAir) {
+				else if (newVal.isOnAir === false && this.localIsOnAir === true) {
 					this.localIsOnAir = false;
 					this.playOut();
 
@@ -242,8 +257,8 @@ createApp({
 					}
 				}
 
-				this.activeTitle.name = at.name;
-    			this.activeTitle.description = at.description;
+				this.lowerthirdStatus.name = newVal.name;
+	 			this.lowerthirdStatus.description = newVal.description;
 			});
 		});
 		const params = new URLSearchParams(window.location.search);
