@@ -91,11 +91,14 @@
 				backface-visibility: hidden;
   				transform: translateZ(0);
 			}
+			[v-cloak] {
+				display: none !important;
+			}
 		</style>
 		<script type="module" src="./index.js"></script>
 	</head>
 	<body>
-		<div id="app">
+		<div id="app" v-cloak>
 			<div id="viewport" :class="{ 'key-mode': isKeyMode }">
 				<div class="lower-third">
 					<img src="logo.png" class="logo revealLogo" alt="">
