@@ -267,7 +267,7 @@ createApp({
 				}
 
 				this.lowerthirdStatus.name = newVal.name;
-	 			this.lowerthirdStatus.description = newVal.description;
+				this.lowerthirdStatus.description = newVal.description;
 			});
 		});
 		const params = new URLSearchParams(window.location.search);
