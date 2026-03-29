@@ -59,7 +59,7 @@ createApp({
 		takeToAir() {
 			this.lowerthirdStatus.isOnAir = false;
 			this.lowerthirdStatus.timerVisual = 0;
-			this.updateLowerthird();
+			this.updateLowerthirdStatus();
 			activeSceneRep.value = 'lowerthird';
 			nodecg.sendMessage('force-reset');
 		}
