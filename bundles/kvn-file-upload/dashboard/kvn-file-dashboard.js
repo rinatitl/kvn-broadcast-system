@@ -36,7 +36,7 @@ createApp({
 		exportToInput() {
 			const fullData = {
 				general: this.vueGeneral,
-				contest: this.vueContests, 
+				contests: this.vueContests, 
 				juries: this.vueJuries,
 				teams: this.vueTeams
 			};
