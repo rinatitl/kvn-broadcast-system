@@ -13,15 +13,7 @@ createApp({
 			vueTeams: [],
 			vueJuries: [],
 			vueContests: [],
-			vueGeneral: {
-				activeTitle: {
-				name: '',
-				description: '',
-				isOnAir: false,
-				autoOut: 0,
-				draftName: '',
-				draftDescription: ''
-			}},
+			vueGeneral: {},
 		}
 	},
 	methods: {
@@ -57,19 +49,7 @@ createApp({
 			this.vueTeams = [];
 			this.vueJuries = [];
 			this.vueContests = [];
-			this.vueGeneral = {
-				gameTitle: "",
-				date: "",
-				host: "",
-				currentContest: 0,
-				activeTitle: {
-					name: '',
-					description: '',
-					isOnAir: false,
-					autoOut: 0,
-					timerVisual: 0
-				}
-			};
+			this.vueGeneral = {};
 
 			this.sync(teamsRep, this.vueTeams);
 			this.sync(juriesRep, this.vueJuries);
