@@ -186,20 +186,20 @@
 						</div>
 					</div>
 					<div id="teamList">
-						<div class="marks-controls row mb-1" v-for="team in displayTeams" :key="team.id">
+						<div class="marks-controls row mb-1" v-for="(team, index) in displayTeams" :key="team.id">
 							<div class="col-sm-4">
 								<p>{{ team.name }}</p>
 							</div>
 							<div class="col-sm-2">
-								<input type="number" class="form-control form-input-focus-votes" v-model.number="team.votes" @change="updateTeams">
+								<input type="number" class="form-control form-input-focus-votes" v-model.number="team.votes" @change="updateTeams" :ref="'input-votes-' + index" @keydown.up.prevent="moveFocus(index, -1, 'votes')" @keydown.down.prevent="moveFocus(index, 1, 'votes')">
 							</div>
 							<div class="col-sm-3">
-								<input type="number" class="form-control" v-model.number.lazy="team.sum" @change="updateTeams">
+								<input type="number" class="form-control" v-model.number.lazy="team.sum" @change="updateTeams" :ref="'input-sum-' + index" @keydown.up.prevent="moveFocus(index, -1, 'sum')" @keydown.down.prevent="moveFocus(index, 1, 'sum')">
 							</div>
 							<div class="col-sm-3">
 								<div class="btn-toolbar" role="toolbar">
 									<div class="btn-group btn-group-sm">
-										<input type="number" class="form-control form-input-focus-points" style="width: 100px;" v-model="addingPoints[team.id]" @keyup.enter="applyPoints(team.id)">
+										<input type="number" class="form-control form-input-focus-points" style="width: 100px;" v-model="addingPoints[team.id]" @keyup.enter="applyPoints(team.id)" :ref="'input-adding-' + index" @keydown.up.prevent="moveFocus(index, -1, 'adding')" @keydown.down.prevent="moveFocus(index, 1, 'adding')">
 										<button type="button" class="btn btn-secondary" style="font-size: 1.2rem;" @click="applyPoints(team.id)"><i class="bi bi-plus"></i></button>
 									</div>
 								</div>

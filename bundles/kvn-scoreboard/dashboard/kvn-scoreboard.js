@@ -123,6 +123,19 @@ createApp({
             if (confirm('Очистить все добавляемые баллы?')) {
                 this.addingPoints = {};
             }
+        },
+        moveFocus(currentIndex, direction, fieldType) {
+            const nextIndex = currentIndex + direction;
+
+            if (nextIndex >= 0 && nextIndex < this.vueTeams.length) {
+                const nextRefName = `input-${fieldType}-${nextIndex}`;
+                const nextInput = this.$refs[nextRefName];
+
+                if (nextInput && nextInput[0]) {
+                    nextInput[0].focus();
+                    nextInput[0].select();
+                }
+            }
         }
 	},
 	computed: {
