@@ -186,7 +186,14 @@ createApp({
         },
         sortedTeams() {
             if (!this.vueTeams.length) return [];
-            return _.orderBy(this.vueTeams, ['sum', 'votes'], ['desc', 'desc']);
+
+            const draft = this.vueTeams.map(team => ({
+                ...team,
+                sum: Number(team.sum) || 0,
+                votes: Number(team.votes) || 0
+            }));
+
+            return _.orderBy(draft, ['sum', 'votes'], ['desc', 'desc']);
         }
     },
     watch: {
