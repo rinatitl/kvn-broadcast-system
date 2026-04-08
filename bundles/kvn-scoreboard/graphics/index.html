@@ -1,10 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+		<link
+			href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+			rel="stylesheet" />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+			crossorigin="anonymous" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 		<style>
 			body {
 				font-family: "Open Sans", serif;
@@ -26,11 +34,11 @@
 			}
 			.header {
 				/* background: rgba(249, 150, 31, 1); */
-				background: #C8470E;
+				background: #c8470e;
 				color: white;
 				position: absolute;
 				top: 160px;
-				left: calc((1920px - 1500px)/2);
+				left: calc((1920px - 1500px) / 2);
 				width: 1500px;
 				display: flex;
 				align-items: center;
@@ -59,20 +67,20 @@
 				/* margin-top: 10px; */
 			}
 			.legend {
-				
 				color: white;
 				position: absolute;
 				display: flex;
 				justify-content: space-between;
-				
+
 				top: 320px;
-				left: calc((1920px - 1500px)/2);
+				left: calc((1920px - 1500px) / 2);
 				width: 1500px;
 				height: 60px;
 				font-size: 30px;
 				font-weight: 700;
 			}
-			.left-legend, .right-legend {
+			.left-legend,
+			.right-legend {
 				/* background: rgb(203, 119, 16); */
 				background: #d86e0b;
 				align-items: center;
@@ -81,7 +89,8 @@
 				display: flex;
 				justify-content: space-between;
 			}
-			.left-legend p, .right-legend p {
+			.left-legend p,
+			.right-legend p {
 				margin: 0;
 				padding: 0;
 				width: 150px;
@@ -92,17 +101,19 @@
 			/* .left-legend p:first-child, .right-legend p:first-child {
 				width: 70px;
 			}  */
-			.left-legend p:nth-child(2), .right-legend p:nth-child(2) {
+			.left-legend p:nth-child(2),
+			.right-legend p:nth-child(2) {
 				width: 575px;
 				text-align: center;
 			}
-			.left-legend p:last-child, .right-legend p:last-child {
+			.left-legend p:last-child,
+			.right-legend p:last-child {
 				font-weight: 700;
 			}
 			.elements {
 				position: absolute;
 				top: 385px;
-				left: calc((1920px - 1500px)/2);
+				left: calc((1920px - 1500px) / 2);
 				width: 1500px;
 				height: calc(6 * 70px + 7 * 5px);
 				display: flex;
@@ -111,7 +122,7 @@
 				align-content: space-between;
 			}
 			.element {
-				background: #F4EBCA;
+				background: #f4ebca;
 				color: #480001;
 				display: flex;
 				justify-content: space-between;
@@ -161,7 +172,7 @@
 				font-kerning: none;
 			}
 			.element {
-				transition-delay: calc(var(--idx) * .1s)
+				transition-delay: calc(var(--idx) * 0.1s);
 			}
 			/* .kicked-team {
 				background: #d3cdb7;
@@ -177,10 +188,12 @@
 				<div v-if="scoreboardStatus.isOnAir" class="scoreboard-container">
 					<div class="header">
 						<div class="logo">
-							<img src="logo.png" alt="">
+							<img src="logo.png" alt="" />
 						</div>
 						<div class="game-name">
-							<div id="game-name" class="target" style="font-size: 80px;">{{ scoreboardStatus.gameTitle }}</div>
+							<div id="game-name" class="target" style="font-size: 80px">
+								{{ scoreboardStatus.gameTitle }}
+							</div>
 						</div>
 					</div>
 					<div class="legend">
@@ -198,11 +211,20 @@
 						</div>
 					</div>
 					<transition-group tag="div" name="fade" class="elements">
-						<div class="element item" v-for="(team, index) in sortedTeams" :id = "'team'+team.id" class="item" :key="team.id" :style="{ height: elementHeight }" :class="{ 'is-highlighted': highlightedTeams.includes(team.id) }">
-							<p> {{ index + 1 }} </p>
+						<div
+							class="element item"
+							v-for="(team, index) in sortedTeams"
+							:id="'team'+team.id"
+							class="item"
+							:key="team.id"
+							:style="{ height: elementHeight }"
+							:class="{ 'is-highlighted': highlightedTeams.includes(team.id) }">
+							<p>{{ index + 1 }}</p>
 							<!-- <p> {{ sortedVueTeams.length - vueActiveContest * 2 }} </p> -->
 							<p>{{ team.name }}</p>
-							<p :id="'teamSum'+team.id"> {{ animatedSums[team.id] !== undefined ? animatedSums[team.id] : team.sum }} </p>
+							<p :id="'teamSum'+team.id">
+								{{ animatedSums[team.id] !== undefined ? animatedSums[team.id] : team.sum }}
+							</p>
 						</div>
 					</transition-group>
 				</div>
@@ -212,7 +234,11 @@
 		<!-- <img src="example.jpg" alt="" class="example-image"> -->
 		<script src="https://unpkg.com/split-type"></script>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js" integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+			integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"></script>
 		<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
 	</body>
 </html>

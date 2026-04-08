@@ -2,8 +2,14 @@
 <html lang="en" data-bs-theme="dark">
 	<head>
 		<meta charset="UTF-8" />
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"/>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+			crossorigin="anonymous" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 		<style>
 			body {
 				background: #2f3b52;
@@ -44,29 +50,65 @@
 					</div>
 					<div class="btn-toolbar mt-3" role="toolbar">
 						<div class="btn-group btn-group-lg me-2" role="group">
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="takeToAir"><i class="bi bi-eye"></i> Prepare</button>
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="toggleAir(true, 0)"><i class="bi bi-play-fill" ></i> Play In</button>
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="toggleAir(false, 0)"><i class="bi bi-arrow-bar-right"></i> Play Out</button>
+							<button type="button" class="btn btn-light" style="font-size: 1.5rem" @click="takeToAir">
+								<i class="bi bi-eye"></i> Prepare
+							</button>
+							<button
+								type="button"
+								class="btn btn-light"
+								style="font-size: 1.5rem"
+								@click="toggleAir(true, 0)">
+								<i class="bi bi-play-fill"></i> Play In
+							</button>
+							<button
+								type="button"
+								class="btn btn-light"
+								style="font-size: 1.5rem"
+								@click="toggleAir(false, 0)">
+								<i class="bi bi-arrow-bar-right"></i> Play Out
+							</button>
 						</div>
 					</div>
 					<div class="btn-toolbar mt-3" role="toolbar">
 						<div class="btn-group btn-group-sm me-2" role="group">
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="toggleAir(true, 5)"><i class="bi bi-play" ></i> 5 sec</button>
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="toggleAir(true, 7)"><i class="bi bi-play"></i> 7 sec</button>
+							<button
+								type="button"
+								class="btn btn-light"
+								style="font-size: 1.5rem"
+								@click="toggleAir(true, 5)">
+								<i class="bi bi-play"></i> 5 sec
+							</button>
+							<button
+								type="button"
+								class="btn btn-light"
+								style="font-size: 1.5rem"
+								@click="toggleAir(true, 7)">
+								<i class="bi bi-play"></i> 7 sec
+							</button>
 						</div>
 						<div class="btn-group btn-group-sm">
-							<input type="text" class="form-control" style="width: 70px;" v-model="customSec">
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem;" @click="toggleAir(true, customSec)"><i class="bi bi-play"></i> sec</button>
+							<input type="text" class="form-control" style="width: 70px" v-model="customSec" />
+							<button
+								type="button"
+								class="btn btn-light"
+								style="font-size: 1.5rem"
+								@click="toggleAir(true, customSec)">
+								<i class="bi bi-play"></i> sec
+							</button>
 						</div>
 					</div>
-					<button type="button" class="btn btn-danger btn-lg mt-4" @click="resetScreen"><i class="bi bi-x-circle"></i> Clear screen</button>
+					<button type="button" class="btn btn-danger btn-lg mt-4" @click="resetScreen">
+						<i class="bi bi-x-circle"></i> Clear screen
+					</button>
 				</div>
 				<div class="col">
 					<h2>Отправлено в титры</h2>
 					<label for="kvn-input-name" class="form-label mt-1">Главная подпись</label>
 					<p id="text-lt" class="fw-normal fs-5" style="color: white">{{ lowerthirdStatus.name }}</p>
 					<label for="kvn-input-description" class="form-label mt-1">Описание</label>
-					<p id="description-lt" class="fw-normal fs-5" style="color: white">{{ lowerthirdStatus.description }}</p>
+					<p id="description-lt" class="fw-normal fs-5" style="color: white">
+						{{ lowerthirdStatus.description }}
+					</p>
 				</div>
 			</div>
 			<hr />
@@ -89,7 +131,13 @@
 						<button type="button" class="btn btn-secondary disabled placeholder" v-if="vueJuries == ''">
 							Нет данных
 						</button>
-						<button type="button" class="btn btn-secondary" aria-current="true" v-for="jury in vueJuries" @click="prepareTitle(jury, 'jury')" v-else>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							aria-current="true"
+							v-for="jury in vueJuries"
+							@click="prepareTitle(jury, 'jury')"
+							v-else>
 							{{ jury.name }}
 						</button>
 					</div>
@@ -101,7 +149,13 @@
 						<button type="button" class="btn btn-secondary disabled placeholder" v-if="vueTeams == ''">
 							Нет данных
 						</button>
-						<button type="button" class="btn btn-secondary" aria-current="true" v-for="team in vueTeams" @click="prepareTitle(team, 'team')" v-else>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							aria-current="true"
+							v-for="team in vueTeams"
+							@click="prepareTitle(team, 'team')"
+							v-else>
 							{{ team.name }}
 						</button>
 					</div>
@@ -112,19 +166,20 @@
 			<div class="row">
 				<div class="col">
 					<label for="kvn-input-name" class="form-label mt-1">Главная подпись</label>
-					<input type="text" id="kvn-input-name" class="form-control" v-model="customName"/>
+					<input type="text" id="kvn-input-name" class="form-control" v-model="customName" />
 				</div>
 				<div class="col">
 					<label for="kvn-input-description" class="form-label mt-1">Описание</label>
-					<input type="text" id="kvn-input-description" class="form-control" v-model="customDescription"/>
+					<input type="text" id="kvn-input-description" class="form-control" v-model="customDescription" />
 				</div>
 			</div>
-			<button class="btn btn-secondary mt-2" @click="sendCustom()">
-				Отправить пользовательский титр
-			</button>
+			<button class="btn btn-secondary mt-2" @click="sendCustom()">Отправить пользовательский титр</button>
 		</div>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+			crossorigin="anonymous"></script>
 		<script type="module" src="./kvn-lowerthird.js"></script>
 	</body>
 </html>

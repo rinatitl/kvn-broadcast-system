@@ -1,28 +1,28 @@
 const { createApp } = Vue;
 
-const teamsRep = nodecg.Replicant('teams', 'kvn-file-upload');
-const contestsRep = nodecg.Replicant('contests', 'kvn-file-upload');
-const generalRep = nodecg.Replicant('general-information', 'kvn-file-upload');
-const scoreboardStatusRep = nodecg.Replicant('scoreboard-status', 'kvn-scoreboard');
-const activeSceneRep = nodecg.Replicant('active-scene', 'kvn-file-upload');
+const teamsRep = nodecg.Replicant("teams", "kvn-file-upload");
+const contestsRep = nodecg.Replicant("contests", "kvn-file-upload");
+const generalRep = nodecg.Replicant("general-information", "kvn-file-upload");
+const scoreboardStatusRep = nodecg.Replicant("scoreboard-status", "kvn-scoreboard");
+const activeSceneRep = nodecg.Replicant("active-scene", "kvn-file-upload");
 
 createApp({
 	data() {
 		return {
 			vueTeams: [],
 			addingPoints: {},
-			rawImportString: '',
+			rawImportString: "",
 			adminSort: false,
 			showConfirmModal: false,
 			showSimulationModal: false,
             confirmListData: [],
 			scoreboardStatus: {},
-            activeScene: '',
-		}
+			activeScene: "",
+		};
 	},
 	methods: {
 		applyPoints(teamId) {
-            const team = teamsRep.value.find(t => t.id === teamId);
+			const team = teamsRep.value.find((t) => t.id === teamId);
             const p = parseInt(this.addingPoints[teamId]) || 0;
 
             if (team && p !== 0) {
@@ -32,7 +32,7 @@ createApp({
                 this.addingPoints[teamId] = "";
 
                 // Сигнал графике "моргнуть" цифрой
-                nodecg.sendMessage('highlight-score', teamId);
+				nodecg.sendMessage("highlight-score", teamId);
             }
         },
 		parseGoogleScores() {
@@ -52,10 +52,15 @@ createApp({
             }
 
             // Извлекаем только числа из строки
-            const importedValues = _.trim(_.replace(this.rawImportString, /\D+/g, ' ')).split(/\s+/);
+			const importedValues = _.trim(_.replace(this.rawImportString, /\D+/g, " ")).split(/\s+/);
 
             if (importedValues.length < originalTeams.length) {
-                if (!confirm(`В строке только ${importedValues.length} значений, а команд ${originalTeams.length}. Продолжить?`)) return;
+				if (
+					!confirm(
+						`В строке только ${importedValues.length} значений, а команд ${originalTeams.length}. Продолжить?`,
+					)
+				)
+					return;
             }
             // 3. Формируем список подтверждения, опираясь на ИСХОДНЫЙ порядок
             this.confirmListData = originalTeams.map((team, index) => {
@@ -64,14 +69,14 @@ createApp({
                     id: team.id,
                     name: team.name,
                     added: addedVal,
-                    newTotal: (team.sum || 0) + addedVal
+					newTotal: (team.sum || 0) + addedVal,
                 };
             });
 
             this.showConfirmModal = true;
         },
 		confirmAndDistribute() {
-            this.confirmListData.forEach(item => {
+			this.confirmListData.forEach((item) => {
                 this.addingPoints[item.id] = item.added;
             });
             this.showConfirmModal = false;
@@ -82,45 +87,45 @@ createApp({
         },
 		clearScreen() {
 			scoreboardStatusRep.value.isOnAir = false;
-			nodecg.sendMessage('clear-screen-instant');
-			console.log('sent clearscreen')
+			nodecg.sendMessage("clear-screen-instant");
+			console.log("sent clearscreen");
 		},
 		resetAllScores() {
             if (confirm("Внимание! Это обнулит ВСЕ баллы и голоса. Уверены?")) {
-                teamsRep.value.forEach(t => {
+				teamsRep.value.forEach((t) => {
                     t.sum = 0;
                     t.votes = 0;
                 });
             }
         },
         takeToAir() {
-            activeSceneRep.value = 'scoreboard';
+			activeSceneRep.value = "scoreboard";
             scoreboardStatusRep.value.isOnAir = false;
-            nodecg.sendMessage('clear-screen-instant');
+			nodecg.sendMessage("clear-screen-instant");
         },
         updateTeams() {
             teamsRep.value = JSON.parse(JSON.stringify(this.vueTeams));
         },
         clearVotes() {
-            if (confirm('Удалить все 0 в полях для голосов?')) {
+			if (confirm("Удалить все 0 в полях для голосов?")) {
                 const teams = JSON.parse(JSON.stringify(this.vueTeams));
-                teams.forEach(team => {
-                    team.votes = '';
+				teams.forEach((team) => {
+					team.votes = "";
                 });
                 this.vueTeams = teams;
             }
         },
         clearSums() {
-            if (confirm('Обнулить все итоговые баллы?')) {
+			if (confirm("Обнулить все итоговые баллы?")) {
                 const teams = JSON.parse(JSON.stringify(this.vueTeams));
-                teams.forEach(team => {
+				teams.forEach((team) => {
                     team.sum = 0;
                 });
                 teamsRep.value = teams;
             }
         },
         clearAddingPoints() {
-            if (confirm('Очистить все добавляемые баллы?')) {
+			if (confirm("Очистить все добавляемые баллы?")) {
                 this.addingPoints = {};
             }
         },
@@ -136,7 +141,7 @@ createApp({
                     nextInput[0].select();
                 }
             }
-        }
+		},
 	},
 	computed: {
 		displayTeams() {
@@ -145,57 +150,56 @@ createApp({
 			}
 			
             if (this.adminSort) {
-                return _.orderBy(this.vueTeams, ['sum', 'votes'], ['desc', 'desc']);
+				return _.orderBy(this.vueTeams, ["sum", "votes"], ["desc", "desc"]);
             }
             return this.vueTeams;
         },
         simulationResults() {
 			if (!this.vueTeams || this.vueTeams.length === 0) return [];
 			
-            let draft = this.vueTeams.map(team => ({
+			let draft = this.vueTeams.map((team) => ({
                 ...team,
                 sum: team.sum + (parseInt(this.addingPoints[team.id]) || 0),
-                votes: team.votes
+				votes: team.votes,
             }));
-            return _.orderBy(draft, ['sum', 'votes'], ['desc', 'desc']);
+			return _.orderBy(draft, ["sum", "votes"], ["desc", "desc"]);
         },
         tallyStatus() {
 			const isTitleReady = this.scoreboardStatus.isOnAir;
-			const isThisBundleOnMaster = this.activeScene === 'scoreboard';
+			const isThisBundleOnMaster = this.activeScene === "scoreboard";
 
 			if (isTitleReady && isThisBundleOnMaster) {
-				return 'on-air';    // Красный: и там, и там
+				return "on-air"; // Красный: и там, и там
 			} else if (isThisBundleOnMaster) {
-				return 'ready';     // Зеленый: готов в бандле, но Мастер занят другим
+				return "ready"; // Зеленый: готов в бандле, но Мастер занят другим
 			} else {
-				return 'offline';   // Серый: в бандле пусто
+				return "offline"; // Серый: в бандле пусто
 			}
 		}	
 	},
 	mounted() {
 		NodeCG.waitForReplicants(teamsRep, contestsRep, scoreboardStatusRep, activeSceneRep).then(() => {
-            teamsRep.on('change', (newVal) => {
+			teamsRep.on("change", (newVal) => {
                 if (newVal) this.vueTeams = JSON.parse(JSON.stringify(newVal)) || [];
 
-				newVal.forEach(team => {
+				newVal.forEach((team) => {
 					if (this.addingPoints[team.id] === undefined) {
 						this.addingPoints[team.id] = ""; 
 					}
 				});
             });
 
-            contestsRep.on('change', (newVal) => {
+			contestsRep.on("change", (newVal) => {
                 if (newVal) this.vueContests = JSON.parse(JSON.stringify(newVal)) || [];
             });
 
-			scoreboardStatusRep.on('change', (newVal) => {
+			scoreboardStatusRep.on("change", (newVal) => {
                 if (newVal) this.scoreboardStatus = JSON.parse(JSON.stringify(newVal)) || [];
             });
 
-            activeSceneRep.on('change', (newVal) => {
+			activeSceneRep.on("change", (newVal) => {
                 if (newVal) this.activeScene = JSON.parse(JSON.stringify(newVal));
             });
         });
-	}
-}).mount('#app');
-
+	},
+}).mount("#app");
