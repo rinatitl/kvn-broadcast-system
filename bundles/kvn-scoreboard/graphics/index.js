@@ -217,12 +217,11 @@ createApp({
 				return; // Выходим из функции, чтобы не выполнять основной код с волнами
 			}
 
-			const delta = newSum - oldSum;
 			const tl = gsap.timeline();
 
 			// --- ЭТАП 1: Подготовка ---
 			tl.add(() => {
-				this.teamAdds[teamId] = delta;
+				this.teamAdds[teamId] = newSum - oldSum;
 				this.teamAdds = { ...this.teamAdds };
 				// Подсветка включается сразу, но основной цвет поменяем позже
 				if (!this.highlightedTeams.includes(teamId)) {
