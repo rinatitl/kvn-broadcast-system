@@ -251,6 +251,19 @@ createApp({
 
 			tl.to({}, { duration: 1.5 });
 
+			const orderBefore = this.sortedDisplayTeams.map((t) => t.id);
+			const nextTeams = this.displayTeams.map((t) => ({
+				...t,
+				sum: t.id === teamId ? newSum : this.animatedSums[t.id] || t.sum,
+			}));
+			const orderAfter = _.orderBy(nextTeams, ["sum", "votes"], ["desc", "desc"]).map((t) => t.id);
+			const movingTeamIds = orderBefore.filter((id, index) => id !== orderAfter[index]);
+			const movingRanksSelector = movingTeamIds.map((id) => `#team${id} .team-rank`).join(",");
+
+			if (movingRanksSelector) {
+				tl.to(movingRanksSelector, { opacity: 0, duration: 0.2 });
+			}
+
 			// --- ЭТАП 3: Перемещение (FLIP) ---
 			tl.add(() => {
 				const elements = document.querySelectorAll(".element");
@@ -299,6 +312,23 @@ createApp({
 
 			// Ждем окончания перемещения
 			tl.to({}, { duration: 1.5 });
+
+			tl.add(() => {
+				const allRanks = document.querySelectorAll(".team-rank");
+
+				const hiddenRanks = Array.from(allRanks).filter((el) => {
+					return window.getComputedStyle(el).opacity < 0.1;
+				});
+
+				if (hiddenRanks.length > 0) {
+					gsap.to(hiddenRanks, {
+						opacity: 1,
+						duration: 0.5,
+						stagger: 0.1,
+						ease: "power1.out",
+					});
+				}
+			});
 
 			// --- ЭТАП 4: Финальная волна + Смена цвета + Убирание дельты ---
 			tl.add(() => {

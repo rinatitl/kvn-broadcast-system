@@ -57,7 +57,7 @@
 							:class="{ 'is-highlighted': highlightedTeams.includes(team.id) }">
 							<div :id="'wave' + team.id" class="wave-layer"></div>
 							<div class="content-layer">
-								<p>{{ index + 1 }}</p>
+								<p class="team-rank">{{ index + 1 }}</p>
 								<!-- <p> {{ sortedVueTeams.length - vueActiveContest * 2 }} </p> -->
 								<p>{{ team.name }}</p>
 								<p :id="'teamSum'+team.id" class="score-cell">
