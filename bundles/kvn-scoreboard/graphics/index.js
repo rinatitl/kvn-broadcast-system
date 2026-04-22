@@ -366,6 +366,28 @@ createApp({
 				}
 			});
 		},
+		executeResetAnimation() {
+			console.log("inside executeResetAnimation");
+			this.highlightedTeams = [];
+
+			const elements = document.querySelectorAll(".element");
+			gsap.to(elements, {
+				backgroundColor: "#F4EBCA", // Или твой исходный цвет плашки
+				duration: 0.8,
+				stagger: 0.05,
+				ease: "power2.inOut",
+				onComplete: () => {
+					// ОЧЕНЬ ВАЖНО: Удаляем инлайновый стиль после анимации.
+					// Это позволит CSS снова управлять элементом, если нужно.
+					gsap.set(elements, { clearProps: "backgroundColor" });
+				},
+			});
+
+			const activeAdds = document.querySelectorAll('[id^="teamAdd"]');
+			if (activeAdds.length > 0) {
+				gsap.to(activeAdds, { opacity: 0, y: -20, duration: 0.5 });
+			}
+		},
 	},
 	computed: {
 		elementHeight() {
@@ -472,6 +494,10 @@ createApp({
 		});
 		nodecg.listenFor("clear-screen-instant", () => {
 			this.clearScreen();
+		});
+		nodecg.listenFor("trigger-reset-highlights", () => {
+			console.log("listened");
+			this.executeResetAnimation();
 		});
 	},
 }).mount("#app");

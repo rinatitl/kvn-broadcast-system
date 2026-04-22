@@ -143,6 +143,9 @@ createApp({
 				}
 			}
 		},
+		resetHighlights() {
+			nodecg.sendMessage("trigger-reset-highlights");
+		},
 	},
 	computed: {
 		displayTeams() {
