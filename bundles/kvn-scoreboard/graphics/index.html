@@ -46,23 +46,30 @@
 							<p>Баллы</p>
 						</div>
 					</div>
-					<transition-group tag="div" name="fade" class="elements">
+					<div class="elements">
 						<div
 							class="element item"
-							v-for="(team, index) in sortedTeams"
+							v-for="(team, index) in sortedDisplayTeams"
 							:id="'team'+team.id"
 							class="item"
 							:key="team.id"
 							:style="{ height: elementHeight }"
 							:class="{ 'is-highlighted': highlightedTeams.includes(team.id) }">
-							<p>{{ index + 1 }}</p>
-							<!-- <p> {{ sortedVueTeams.length - vueActiveContest * 2 }} </p> -->
-							<p>{{ team.name }}</p>
-							<p :id="'teamSum'+team.id">
-								{{ animatedSums[team.id] !== undefined ? animatedSums[team.id] : team.sum }}
-							</p>
+							<div :id="'wave' + team.id" class="wave-layer"></div>
+							<div class="content-layer">
+								<p>{{ index + 1 }}</p>
+								<!-- <p> {{ sortedVueTeams.length - vueActiveContest * 2 }} </p> -->
+								<p>{{ team.name }}</p>
+								<p :id="'teamSum'+team.id" class="score-cell">
+									<span v-show="teamAdds[team.id]" :id="'teamAdd'+team.id" class="add-sum">
+										+{{ teamAdds[team.id] }}
+									</span>
+
+									<span class="main-sum"> {{ animatedSums[team.id] }} </span>
+								</p>
+							</div>
 						</div>
-					</transition-group>
+					</div>
 				</div>
 			</transition>
 		</div>

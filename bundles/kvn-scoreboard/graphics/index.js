@@ -116,6 +116,8 @@ createApp({
 	data() {
 		return {
 			vueTeams: [],
+			displayTeams: [],
+			teamAdds: {},
 			scoreboardStatus: {},
 			animatedSums: {},
 			highlightedTeams: [],
@@ -153,6 +155,188 @@ createApp({
 				this.ignoreAnimation = false;
 			}, 100);
 		},
+		runStepByStepAnimation(teamId, oldSum, newSum) {
+			gsap.globalTimeline.timeScale(0.9);
+			// 1. ПРОВЕРКА НА ОБНУЛЕНИЕ
+			if (newSum === 0) {
+				const tl = gsap.timeline();
+
+				tl.add(() => {
+					const elements = document.querySelectorAll(".element");
+					const firstPositions = new Map();
+					elements.forEach((el) => firstPositions.set(el.id, el.getBoundingClientRect()));
+
+					// Мгновенно обновляем данные для логики Vue
+					const teamIndex = this.displayTeams.findIndex((t) => t.id === teamId);
+					if (teamIndex !== -1) {
+						this.displayTeams[teamIndex].sum = 0;
+					}
+
+					this.$nextTick(() => {
+						const elementsAfter = document.querySelectorAll(".element");
+						elementsAfter.forEach((el) => {
+							const firstRect = firstPositions.get(el.id);
+							const lastRect = el.getBoundingClientRect();
+
+							if (firstRect) {
+								const dx = firstRect.left - lastRect.left;
+								const dy = firstRect.top - lastRect.top;
+
+								if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+									gsap.fromTo(
+										el,
+										{ x: dx, y: dy },
+										{ x: 0, y: 0, duration: 1, ease: "power2.inOut" },
+									);
+								}
+							}
+						});
+					});
+				});
+
+				// Параллельно с движением плавно гасим цифры до нуля
+				tl.to(
+					this.animatedSums,
+					{
+						[teamId]: 0,
+						duration: 0.8,
+						snap: { [teamId]: 1 },
+						ease: "power1.inOut",
+					},
+					"<",
+				); // Символ "<" заставляет анимацию начаться одновременно с перемещением
+
+				// Убираем подсветку в конце, если она была
+				tl.add(() => {
+					const teamIndex = this.highlightedTeams.indexOf(teamId);
+					if (teamIndex !== -1) {
+						this.highlightedTeams.splice(teamIndex, 1);
+					}
+				});
+
+				return; // Выходим из функции, чтобы не выполнять основной код с волнами
+			}
+
+			const delta = newSum - oldSum;
+			const tl = gsap.timeline();
+
+			// --- ЭТАП 1: Подготовка ---
+			tl.add(() => {
+				this.teamAdds[teamId] = delta;
+				this.teamAdds = { ...this.teamAdds };
+				// Подсветка включается сразу, но основной цвет поменяем позже
+				if (!this.highlightedTeams.includes(teamId)) {
+					this.highlightedTeams.push(teamId);
+				}
+			});
+
+			// --- ЭТАП 2: Первая волна и накрутка цифр ---
+			tl.add(() => {
+				this.$nextTick(() => {
+					const addEl = document.querySelector(`#teamAdd${teamId}`);
+					const waveEl = document.querySelector(`#team${teamId} .wave-layer`);
+
+					if (addEl) gsap.fromTo(addEl, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5 });
+					if (waveEl)
+						gsap.fromTo(waveEl, { left: "-100%" }, { left: "100%", duration: 1, ease: "power2.inOut" });
+
+					gsap.to(this.animatedSums, {
+						[teamId]: newSum,
+						duration: 0.4,
+						delay: 0.5,
+						snap: { [teamId]: 1 },
+						ease: "power1.out",
+					});
+				});
+			});
+
+			tl.to({}, { duration: 1.5 });
+
+			// --- ЭТАП 3: Перемещение (FLIP) ---
+			tl.add(() => {
+				const elements = document.querySelectorAll(".element");
+				const firstPositions = new Map();
+				elements.forEach((el) => firstPositions.set(el.id, el.getBoundingClientRect()));
+
+				// ТРИГГЕР СОРТИРОВКИ
+				const teamIndex = this.displayTeams.findIndex((t) => t.id === teamId);
+				if (teamIndex !== -1) {
+					this.displayTeams[teamIndex].sum = newSum;
+				}
+
+				this.$nextTick(() => {
+					const elementsAfter = document.querySelectorAll(".element");
+					elementsAfter.forEach((el) => {
+						const firstRect = firstPositions.get(el.id);
+						const lastRect = el.getBoundingClientRect();
+
+						if (firstRect) {
+							const dx = firstRect.left - lastRect.left;
+							const dy = firstRect.top - lastRect.top;
+
+							if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+								gsap.killTweensOf(el);
+								const isActive = el.id === `team${teamId}`;
+								if (isActive) el.style.zIndex = "10";
+
+								gsap.fromTo(
+									el,
+									{ x: dx, y: dy },
+									{
+										x: 0,
+										y: 0,
+										duration: 1.2,
+										ease: "power2.inOut",
+										onComplete: () => {
+											if (isActive) el.style.zIndex = "";
+										},
+									},
+								);
+							}
+						}
+					});
+				});
+			});
+
+			// Ждем окончания перемещения
+			tl.to({}, { duration: 1.5 });
+
+			// --- ЭТАП 4: Финальная волна + Смена цвета + Убирание дельты ---
+			tl.add(() => {
+				const teamEl = document.querySelector(`#team${teamId}`);
+				const waveEl = teamEl?.querySelector(".wave-layer");
+				const addEl = document.querySelector(`#teamAdd${teamId}`);
+
+				// 1. Вторая "финишная" волна
+				if (waveEl) {
+					gsap.fromTo(waveEl, { left: "-100%" }, { left: "100%", duration: 1, ease: "power2.inOut" });
+				}
+
+				// 2. Плавная смена цвета фона (например, на более яркий или золотистый)
+				if (teamEl) {
+					gsap.to(teamEl, {
+						backgroundColor: "#f6d5b2", // Усиливаем подсветку
+						delay: 0.5,
+						duration: 0.5,
+						ease: "power1.inOut",
+					});
+				}
+
+				// 3. Плавно убираем дельту
+				if (addEl) {
+					gsap.to(addEl, {
+						opacity: 0,
+						y: -20,
+						duration: 0.6,
+						delay: 0.4, // Начинает исчезать чуть позже старта волны
+						onComplete: () => {
+							delete this.teamAdds[teamId];
+							this.teamAdds = { ...this.teamAdds };
+						},
+					});
+				}
+			});
+		},
 	},
 	computed: {
 		elementHeight() {
@@ -178,14 +362,19 @@ createApp({
 
 			return heightSum / (effectiveN * heightRatio) + "px";
 		},
-		sortedTeams() {
-			if (!this.vueTeams.length) return [];
+		sortedDisplayTeams() {
+			if (!this.displayTeams.length) return [];
 
-			const draft = this.vueTeams.map((team) => ({
-				...team,
-				sum: Number(team.sum) || 0,
-				votes: Number(team.votes) || 0,
-			}));
+			const draft = this.displayTeams.map((team) => {
+				const currentSum = Number(team.sum) || 0;
+				const currentVotes = Number(team.votes) || 0;
+
+				return {
+					...team,
+					sum: currentSum,
+					votes: currentVotes,
+				};
+			});
 
 			return _.orderBy(draft, ["sum", "votes"], ["desc", "desc"]);
 		},
@@ -197,41 +386,47 @@ createApp({
 				// Проверка: если данных нет, ничего не делаем
 				if (!newVal || !Array.isArray(newVal)) return;
 
+				if (this.displayTeams.length === 0) {
+					this.displayTeams = JSON.parse(JSON.stringify(newVal));
+					newVal.forEach((t) => {
+						this.animatedSums[t.id] = Number(t.sum) || 0;
+					});
+					return;
+				}
+
+				if (newVal.length !== this.displayTeams.length) {
+					this.displayTeams = JSON.parse(JSON.stringify(newVal));
+				} else {
+					newVal.forEach((team) => {
+						const displayT = this.displayTeams.find((t) => t.id === team.id);
+						if (displayT) {
+							displayT.name = team.name; // Обновляем имя мгновенно
+						}
+					});
+				}
+
 				newVal.forEach((team) => {
 					// 1. Проверяем, есть ли уже анимированное значение для этой команды
 					const currentVisualSum = this.animatedSums[team.id];
+					const newBackendSum = Number(team.sum) || 0;
 
 					// 2. Логика подсветки: если новый балл больше того, что мы сейчас показываем
-					if (currentVisualSum !== undefined && team.sum > currentVisualSum) {
-						gsap.to(`#team${team.id}`, {
-							backgroundColor: "#f2d5b4",
-							duration: 0.8,
-							ease: "power2.out",
-							delay: 0.7,
-						});
-
-						if (!this.highlightedTeams.includes(team.id)) {
-							this.highlightedTeams.push(team.id);
-						}
+					if (currentVisualSum !== undefined && newBackendSum != currentVisualSum) {
+						console.log(`Команда ${team.name} получила баллы: ${newBackendSum}`);
+						// Эту функцию напишем на следующем шаге
+						this.runStepByStepAnimation(team.id, currentVisualSum, newBackendSum);
 					}
-
-					// 3. Если команда появилась впервые, записываем начальное значение
-					if (this.animatedSums[team.id] === undefined) {
-						this.animatedSums[team.id] = team.sum || 0;
-					}
-
-					// 4. Запускаем накрутку GSAP
-					gsap.to(this.animatedSums, {
-						duration: 1,
-						[team.id]: team.sum,
-						snap: { [team.id]: 1 },
-						ease: "power2.out",
-					});
 				});
 			},
 		},
 		"scoreboardStatus.isOnAir"(newVal) {
-			if (newVal === false) {
+			if (newVal === true) {
+				this.displayTeams = JSON.parse(JSON.stringify(this.vueTeams));
+				this.vueTeams.forEach((t) => {
+					this.animatedSums[t.id] = Number(t.sum) || 0;
+				});
+			} else {
+				this.teamAdds = {};
 				this.highlightedTeams = [];
 			}
 		},
