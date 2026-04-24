@@ -120,6 +120,10 @@ html {
 	margin-bottom: 5px;
 	overflow: hidden;
 	position: relative;
+	transition-delay: calc(var(--idx) * 0.1s);
+}
+.element.is-inactive {
+	background: #d3cdb7 !important;
 }
 .wave-layer {
 	position: absolute;
@@ -193,9 +197,3 @@ html {
 .target {
 	font-kerning: none;
 }
-.element {
-	transition-delay: calc(var(--idx) * 0.1s);
-}
-/* .kicked-team {
-    background: #d3cdb7;
-} */
