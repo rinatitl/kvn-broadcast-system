@@ -51,10 +51,9 @@
 							class="element item"
 							v-for="(team, index) in sortedDisplayTeams"
 							:id="'team'+team.id"
-							class="item"
 							:key="team.id"
 							:style="{ height: elementHeight }"
-							:class="{ 'is-highlighted': highlightedTeams.includes(team.id) }">
+							:class="{ 'is-highlighted': highlightedTeams.includes(team.id), 'is-inactive' : team.isInactive}">
 							<div :id="'wave' + team.id" class="wave-layer"></div>
 							<div class="content-layer">
 								<p class="team-rank">{{ index + 1 }}</p>

@@ -19,6 +19,7 @@ createApp({
 			scoreboardStatus: {},
 			activeScene: "",
 			showConflicts: false,
+			dropCount: 5,
 		};
 	},
 	methods: {
@@ -26,7 +27,7 @@ createApp({
 			const team = teamsRep.value.find((t) => t.id === teamId);
 			const p = parseInt(this.addingPoints[teamId]) || 0;
 
-			if (team && p !== 0) {
+			if (team && p !== 0 && !team.isInactive) {
 				team.sum += p;
 
 				// Очищаем только поле добавления
@@ -145,6 +146,43 @@ createApp({
 		},
 		resetHighlights() {
 			nodecg.sendMessage("trigger-reset-highlights");
+		},
+		confirmElimination() {
+			if (!teamsRep.value) {
+				console.error("Репликант команд еще не загрузился!");
+				return;
+			}
+			if (!this.dropCount || this.dropCount <= 0) return;
+
+			const teams = teamsRep.value;
+
+			const sortedTeams = [...teams].sort((a, b) => {
+				return b.sum - a.sum || b.votes - a.votes;
+			});
+
+			const idsToDrop = sortedTeams.slice(-this.dropCount).map((t) => t.id);
+
+			teams.forEach((team) => {
+				if (idsToDrop.includes(team.id)) {
+					team.isInactive = true;
+				}
+			});
+
+			teamsRep.value = teams;
+
+			setTimeout(() => {
+				nodecg.sendMessage("trigger-elimination-animation", idsToDrop);
+			}, 50);
+		},
+		cancelElimination() {
+			const teams = teamsRep.value;
+
+			teams.forEach((team) => {
+				team.isInactive = false;
+			});
+
+			teamsRep.value = teams;
+			nodecg.sendMessage("cancel-elimination-animation");
 		},
 	},
 	computed: {

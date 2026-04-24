@@ -370,7 +370,7 @@ createApp({
 			console.log("inside executeResetAnimation");
 			this.highlightedTeams = [];
 
-			const elements = document.querySelectorAll(".element");
+			const elements = document.querySelectorAll(".element:not(.is-inactive)");
 			gsap.to(elements, {
 				backgroundColor: "#F4EBCA", // Или твой исходный цвет плашки
 				duration: 0.8,
@@ -387,6 +387,38 @@ createApp({
 			if (activeAdds.length > 0) {
 				gsap.to(activeAdds, { opacity: 0, y: -20, duration: 0.5 });
 			}
+		},
+		processElimination(idsToDrop) {
+			const selectors = idsToDrop.map((id) => `#team${id}`).join(",");
+
+			gsap.to(selectors, {
+				backgroundColor: "#d3cdb7",
+				duration: 1.2,
+				stagger: {
+					each: 0.2,
+					from: "end",
+				},
+				ease: "power2.inOut",
+				// onComplete: () => {
+				// 	this.$nextTick(() => {
+				// 		gsap.set(selectors, { clearProps: "backgroundColor" });
+				// 		console.log("Стили очищены, теперь работает CSS класс");
+				// 	});
+				// },
+			});
+		},
+		processCancelElimination() {
+			const allTeams = document.querySelectorAll(".element");
+
+			gsap.to(allTeams, {
+				backgroundColor: "#f4ebca",
+				duration: 1,
+				stagger: 0.2,
+				ease: "power2.out",
+				// onComplete: () => {
+				// 	gsap.set(allTeams, { clearProps: "backgroundColor" });
+				// },
+			});
 		},
 	},
 	computed: {
@@ -498,6 +530,12 @@ createApp({
 		nodecg.listenFor("trigger-reset-highlights", () => {
 			console.log("listened");
 			this.executeResetAnimation();
+		});
+		nodecg.listenFor("trigger-elimination-animation", (idsToDrop) => {
+			this.processElimination(idsToDrop);
+		});
+		nodecg.listenFor("cancel-elimination-animation", () => {
+			this.processCancelElimination();
 		});
 	},
 }).mount("#app");

@@ -109,6 +109,33 @@
 				</div>
 			</div>
 			<hr />
+
+			<div class="row">
+				<div class="col">
+					<h3 class="mt-2">Отсечь команды</h3>
+					<div class="row">
+						<div class="col">
+							<div class="input-group">
+								<input
+									v-model.number="dropCount"
+									class="form-control"
+									label="Команд навылет"
+									type="number"
+									min="0"
+									dense />
+								<button class="btn btn-secondary" type="button" @click="confirmElimination">
+									Отсечь команды
+								</button>
+							</div>
+						</div>
+						<div class="col">
+							<button class="btn btn-secondary" type="button" @click="cancelElimination">
+								Убрать отсечение
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!-- <div class="row">
 				<div class="contests col">
 					<h3 class="mt-2">Конкурсы</h3>
@@ -323,6 +350,7 @@
 										<button
 											type="button"
 											class="btn btn-secondary"
+											:disabled="team.isInactive"
 											style="font-size: 1.2rem"
 											@click="applyPoints(team.id)">
 											<i class="bi bi-plus"></i>
