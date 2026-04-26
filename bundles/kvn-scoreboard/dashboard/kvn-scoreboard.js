@@ -2,7 +2,6 @@ const { createApp } = Vue;
 
 const teamsRep = nodecg.Replicant("teams", "kvn-file-upload");
 const contestsRep = nodecg.Replicant("contests", "kvn-file-upload");
-const generalRep = nodecg.Replicant("general-information", "kvn-file-upload");
 const scoreboardStatusRep = nodecg.Replicant("scoreboard-status", "kvn-scoreboard");
 const activeSceneRep = nodecg.Replicant("active-scene", "kvn-file-upload");
 

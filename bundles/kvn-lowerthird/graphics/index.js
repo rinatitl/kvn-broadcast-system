@@ -1,4 +1,3 @@
-const generalRep = nodecg.Replicant("general-information", "kvn-file-upload");
 const lowerthirdStatusRep = nodecg.Replicant("lowerthird-status");
 
 let ltTimeline;
