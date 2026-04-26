@@ -415,9 +415,9 @@ createApp({
 				duration: 1,
 				stagger: 0.2,
 				ease: "power2.out",
-				// onComplete: () => {
-				// 	gsap.set(allTeams, { clearProps: "backgroundColor" });
-				// },
+				onComplete: () => {
+					gsap.set(allTeams, { clearProps: "backgroundColor" });
+				},
 			});
 		},
 	},
@@ -484,6 +484,8 @@ createApp({
 						const displayT = this.displayTeams.find((t) => t.id === team.id);
 						if (displayT) {
 							displayT.name = team.name; // Обновляем имя мгновенно
+							displayT.votes = team.votes;
+							displayT.isInactive = Boolean(team.isInactive);
 						}
 					});
 				}
