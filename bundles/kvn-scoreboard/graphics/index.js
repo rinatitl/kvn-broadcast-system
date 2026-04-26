@@ -493,6 +493,9 @@ createApp({
 
 				if (newVal.length !== this.displayTeams.length) {
 					this.displayTeams = JSON.parse(JSON.stringify(newVal));
+					newVal.forEach((t) => {
+						this.animatedSums[t.id] = Number(t.sum) || 0;
+					});
 				} else {
 					newVal.forEach((team) => {
 						const displayT = this.displayTeams.find((t) => t.id === team.id);
