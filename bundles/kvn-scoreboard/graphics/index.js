@@ -389,6 +389,8 @@ createApp({
 			}
 		},
 		processElimination(idsToDrop) {
+			if (!idsToDrop || idsToDrop.length === 0) return;
+
 			const selectors = idsToDrop.map((id) => `#team${id}`).join(",");
 
 			gsap.to(selectors, {
@@ -399,12 +401,18 @@ createApp({
 					from: "end",
 				},
 				ease: "power2.inOut",
-				// onComplete: () => {
-				// 	this.$nextTick(() => {
-				// 		gsap.set(selectors, { clearProps: "backgroundColor" });
-				// 		console.log("Стили очищены, теперь работает CSS класс");
-				// 	});
-				// },
+				onComplete: () => {
+					idsToDrop.forEach((id) => {
+						const displayT = this.displayTeams.find((team) => team.id === id);
+						if (displayT) {
+							displayT.isInactive = true;
+						}
+					});
+
+					this.$nextTick(() => {
+						gsap.set(selectors, { clearProps: "backgroundColor" });
+					});
+				},
 			});
 		},
 		processCancelElimination() {
@@ -416,7 +424,13 @@ createApp({
 				stagger: 0.2,
 				ease: "power2.out",
 				onComplete: () => {
-					gsap.set(allTeams, { clearProps: "backgroundColor" });
+					this.displayTeams.forEach((team) => {
+						team.isInactive = false;
+					});
+
+					this.$nextTick(() => {
+						gsap.set(allTeams, { clearProps: "backgroundColor" });
+					});
 				},
 			});
 		},
@@ -485,7 +499,6 @@ createApp({
 						if (displayT) {
 							displayT.name = team.name; // Обновляем имя мгновенно
 							displayT.votes = team.votes;
-							displayT.isInactive = Boolean(team.isInactive);
 						}
 					});
 				}

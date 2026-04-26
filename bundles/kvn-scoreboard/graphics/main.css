@@ -123,7 +123,7 @@ html {
 	transition-delay: calc(var(--idx) * 0.1s);
 }
 .element.is-inactive {
-	background: #d3cdb7 !important;
+	background: #d3cdb7;
 }
 .wave-layer {
 	position: absolute;
