@@ -28,7 +28,7 @@ createApp({
 			const p = parseInt(this.addingPoints[teamId]) || 0;
 
 			if (team && p !== 0 && !team.isInactive) {
-				team.sum += p;
+				team.sum = (Number(team.sum) || 0) + p;
 
 				// Очищаем только поле добавления
 				this.addingPoints[teamId] = "";
@@ -71,7 +71,7 @@ createApp({
 					id: team.id,
 					name: team.name,
 					added: addedVal,
-					newTotal: (team.sum || 0) + addedVal,
+					newTotal: (Number(team.sum) || 0) + addedVal,
 				};
 			});
 
@@ -199,7 +199,7 @@ createApp({
 
 			let draft = this.vueTeams.map((team) => ({
 				...team,
-				sum: team.sum + (parseInt(this.addingPoints[team.id]) || 0),
+				sum: (Number(team.sum) || 0) + (parseInt(this.addingPoints[team.id]) || 0),
 				votes: team.votes,
 			}));
 			return _.orderBy(draft, ["sum", "votes"], ["desc", "desc"]);
