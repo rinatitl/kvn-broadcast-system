@@ -154,7 +154,7 @@ createApp({
 			}
 			if (!this.dropCount || this.dropCount <= 0) return;
 
-			const teams = teamsRep.value;
+			const teams = JSON.parse(JSON.stringify(teamsRep.value));
 
 			const sortedTeams = [...teams].sort((a, b) => {
 				return b.sum - a.sum || b.votes - a.votes;
@@ -163,9 +163,7 @@ createApp({
 			const idsToDrop = sortedTeams.slice(-this.dropCount).map((t) => t.id);
 
 			teams.forEach((team) => {
-				if (idsToDrop.includes(team.id)) {
-					team.isInactive = true;
-				}
+				team.isInactive = idsToDrop.includes(team.id);
 			});
 
 			teamsRep.value = teams;
@@ -175,7 +173,7 @@ createApp({
 			}, 50);
 		},
 		cancelElimination() {
-			const teams = teamsRep.value;
+			const teams = JSON.parse(JSON.stringify(teamsRep.value));
 
 			teams.forEach((team) => {
 				team.isInactive = false;
