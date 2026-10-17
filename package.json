@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --watch bundles --ext js,json,html --exec nodecg start"
+    "start": "node scripts/start.cjs",
+    "dev": "nodemon --watch bundles --ext js,json,html --exec node scripts/start.cjs",
+    "vendor:update": "node scripts/vendor-assets.cjs"
   },
   "keywords": [],
   "author": "",
