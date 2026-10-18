@@ -3,6 +3,7 @@ const { createApp } = Vue;
 const teamsRep = nodecg.Replicant("teams", "kvn-file-upload");
 const contestsRep = nodecg.Replicant("contests", "kvn-file-upload");
 const scoreboardStatusRep = nodecg.Replicant("scoreboard-status", "kvn-scoreboard");
+const playbackRep = nodecg.Replicant("score-playback", "kvn-scoreboard");
 const activeSceneRep = nodecg.Replicant("active-scene", "kvn-file-upload");
 
 createApp({
@@ -19,22 +20,33 @@ createApp({
 			activeScene: "",
 			showConflicts: false,
 			dropCount: 5,
+			playbackBusy: false,
+			sendingPoints: false,
 		};
 	},
 	methods: {
-		applyPoints(teamId) {
-			const team = teamsRep.value.find((t) => t.id === teamId);
-			const p = parseInt(this.addingPoints[teamId]) || 0;
-
-			if (team && p !== 0 && !team.isInactive) {
-				team.sum = (Number(team.sum) || 0) + p;
-
-				// Очищаем только поле добавления
+		async applyPoints(teamId, mode = "normal") {
+			if (this.playbackBusy || this.sendingPoints) return;
+			const points = parseInt(this.addingPoints[teamId]) || 0;
+			if (!points) return;
+			this.sendingPoints = true;
+			try {
+				await nodecg.sendMessage("apply-score", { teamId, points, mode });
 				this.addingPoints[teamId] = "";
-
-				// Сигнал графике "моргнуть" цифрой
-				nodecg.sendMessage("highlight-score", teamId);
+			} catch (error) {
+				console.error("Не удалось начислить баллы", error);
+			} finally {
+				this.sendingPoints = false;
 			}
+		},
+		playNext(mode) {
+			if (this.nextTeam) this.applyPoints(this.nextTeam.id, mode);
+		},
+		updateNextTooltip() {
+			const element = this.$refs.nextTooltip;
+			if (element) bootstrap.Tooltip.getOrCreateInstance(element).setContent({
+				".tooltip-inner": this.nextTeamTitle,
+			});
 		},
 		parseGoogleScores() {
 			// 1. Проверяем наличие строки
@@ -115,7 +127,6 @@ createApp({
 					team.sum = 0;
 				});
 				teamsRep.value = teams;
-				this.resetHighlights();
 			}
 		},
 		clearAddingPoints() {
@@ -176,6 +187,13 @@ createApp({
 		},
 	},
 	computed: {
+		nextTeam() {
+			const ranked = _.orderBy(this.vueTeams, [t => Number(t.sum) || 0, t => Number(t.votes) || 0], ["desc", "desc"]);
+			return ranked.reverse().find(t => !t.isInactive && (parseInt(this.addingPoints[t.id]) || 0) !== 0);
+		},
+		nextTeamTitle() {
+			return this.nextTeam ? this.nextTeam.name : "Нет команд для начисления";
+		},
 		displayTeams() {
 			if (!this.vueTeams || this.vueTeams.length === 0) {
 				return [];
@@ -251,7 +269,12 @@ createApp({
 				.map((item) => item.id);
 		},
 	},
+	watch: {
+		nextTeamTitle() { this.$nextTick(this.updateNextTooltip); },
+	},
 	mounted() {
+		playbackRep.on("change", value => { this.playbackBusy = !!value?.busy; });
+		this.$nextTick(this.updateNextTooltip);
 		NodeCG.waitForReplicants(teamsRep, contestsRep, scoreboardStatusRep, activeSceneRep).then(
 			() => {
 				teamsRep.on("change", (newVal) => {
@@ -279,3 +302,7 @@ createApp({
 		);
 	},
 }).mount("#app");
+
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((element) => {
+	new bootstrap.Tooltip(element);
+});
