@@ -14,9 +14,48 @@ createApp({
 			vueJuries: [],
 			vueContests: [],
 			vueGeneral: {},
+			dragItem: null,
+			dropTarget: null,
+			reorderError: "",
 		};
 	},
 	methods: {
+		startDrag(event, list, id) {
+			this.dragItem = { list, id };
+			this.reorderError = "";
+			event.dataTransfer.effectAllowed = "move";
+			event.dataTransfer.setData("text/plain", String(id));
+		},
+		dragOver(event, list, id) {
+			if (this.dragItem?.list !== list || this.dragItem.id === id) return;
+			event.preventDefault();
+			event.dataTransfer.dropEffect = "move";
+			const rect = event.currentTarget.getBoundingClientRect();
+			this.dropTarget = { list, id, after: event.clientY > rect.top + rect.height / 2 };
+		},
+		endDrag() {
+			this.dragItem = null;
+			this.dropTarget = null;
+		},
+		dropClass(list, id) {
+			if (this.dropTarget?.list !== list || this.dropTarget.id !== id) return "";
+			return this.dropTarget.after ? "drop-after" : "drop-before";
+		},
+		async dropItem(event, list, id) {
+			this.dragOver(event, list, id);
+			const source = this.dragItem;
+			const target = this.dropTarget;
+			this.endDrag();
+			if (!source || source.list !== list || !target || target.list !== list || target.id !== id) return;
+			try {
+				await nodecg.sendMessage("reorder-list", {
+					list, sourceId: source.id, targetId: id, after: target.after,
+				});
+			} catch (error) {
+				this.reorderError = "Не удалось изменить порядок. Повторите перетаскивание.";
+				console.error(error);
+			}
+		},
 		importFromInput() {
 			try {
 				// Превращаем текст из инпута в объект JS
