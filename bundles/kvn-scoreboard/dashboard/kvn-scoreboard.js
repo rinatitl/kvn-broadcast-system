@@ -91,14 +91,6 @@ createApp({
 			nodecg.sendMessage("clear-screen-instant");
 			console.log("sent clearscreen");
 		},
-		resetAllScores() {
-			if (confirm("Внимание! Это обнулит ВСЕ баллы и голоса. Уверены?")) {
-				teamsRep.value.forEach((t) => {
-					t.sum = 0;
-					t.votes = 0;
-				});
-			}
-		},
 		takeToAir() {
 			activeSceneRep.value = "scoreboard";
 			scoreboardStatusRep.value.isOnAir = false;
@@ -123,6 +115,7 @@ createApp({
 					team.sum = 0;
 				});
 				teamsRep.value = teams;
+				this.resetHighlights();
 			}
 		},
 		clearAddingPoints() {
