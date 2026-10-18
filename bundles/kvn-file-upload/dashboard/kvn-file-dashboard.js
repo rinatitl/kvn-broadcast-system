@@ -73,7 +73,8 @@ createApp({
 		},
 		addContest() {
 			const currentContests = [...this.vueContests];
-			const newId = this.vueContests.length > 0 ? Math.max(...this.vueContests.map((t) => t.id)) + 1 : 1;
+			const newId =
+				this.vueContests.length > 0 ? Math.max(...this.vueContests.map((t) => t.id)) + 1 : 1;
 			currentContests.push({
 				id: newId,
 				name: "",
@@ -95,7 +96,8 @@ createApp({
 		},
 		addJury() {
 			const currentJuries = [...this.vueJuries];
-			const newId = this.vueJuries.length > 0 ? Math.max(...this.vueJuries.map((t) => t.id)) + 1 : 1;
+			const newId =
+				this.vueJuries.length > 0 ? Math.max(...this.vueJuries.map((t) => t.id)) + 1 : 1;
 			currentJuries.push({
 				id: newId,
 				name: "",

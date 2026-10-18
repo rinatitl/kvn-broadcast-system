@@ -81,7 +81,13 @@ createApp({
 	mounted() {
 		this.autoOutTimer = null;
 
-		NodeCG.waitForReplicants(teamsRep, juriesRep, generalRep, activeSceneRep, lowerthirdStatusRep).then(() => {
+		NodeCG.waitForReplicants(
+			teamsRep,
+			juriesRep,
+			generalRep,
+			activeSceneRep,
+			lowerthirdStatusRep,
+		).then(() => {
 			teamsRep.on("change", (newVal) => {
 				if (newVal) this.vueTeams = newVal || [];
 			});

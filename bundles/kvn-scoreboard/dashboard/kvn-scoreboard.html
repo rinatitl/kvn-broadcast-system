@@ -81,7 +81,11 @@
 					<div id="status-sb" class="status-bar" :class="tallyStatus">&nbsp;</div>
 					<div class="btn-toolbar mt-3" role="toolbar">
 						<div class="btn-group btn-group-lg me-2" role="group">
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem" @click="takeToAir">
+							<button
+								type="button"
+								class="btn btn-light"
+								style="font-size: 1.5rem"
+								@click="takeToAir">
 								<i class="bi bi-eye"></i> Prepare
 							</button>
 							<button
@@ -100,7 +104,10 @@
 							</button>
 						</div>
 					</div>
-					<button type="button" class="btn btn-outline-danger btn-lg mt-4 me-1" @click="resetHighlights">
+					<button
+						type="button"
+						class="btn btn-outline-danger btn-lg mt-4 me-1"
+						@click="resetHighlights">
 						<i class="bi bi-highlighter"></i> Clear highligts
 					</button>
 					<button type="button" class="btn btn-danger btn-lg mt-4" @click="clearScreen">
@@ -214,7 +221,10 @@
 						<div class="modal-content">
 							<div class="modal-header">
 								<h1 class="modal-title fs-5" id="emulateModalLabel">Предпросмотр итога вывода</h1>
-								<button type="button" class="btn-close" @click="showSimulationModal = false"></button>
+								<button
+									type="button"
+									class="btn-close"
+									@click="showSimulationModal = false"></button>
 							</div>
 							<div class="modal-body">
 								<table class="table table-sm table-borderless">
@@ -279,7 +289,10 @@
 							</button>
 						</div>
 					</div>
-					<button type="button" class="btn btn-secondary disabled placeholder" v-if="displayTeams == ''">
+					<button
+						type="button"
+						class="btn btn-secondary disabled placeholder"
+						v-if="displayTeams == ''">
 						Нет данных
 					</button>
 					<div class="row" v-else>
@@ -287,7 +300,9 @@
 							<h5>Команда</h5>
 						</div>
 						<div class="col-sm-2">
-							<h5 class="pointer-header" @click="clearVotes">Голосов <i class="bi bi-x-circle"></i></h5>
+							<h5 class="pointer-header" @click="clearVotes">
+								Голосов <i class="bi bi-x-circle"></i>
+							</h5>
 						</div>
 						<div class="col-sm-3">
 							<h5 class="pointer-header" @click="clearSums">

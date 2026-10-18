@@ -65,9 +65,19 @@
 					v-model.lazy="vueGeneral.gameTitle"
 					@change="updateGeneral" />
 				<label for="" class="form-label mt-1">Дата игры</label>
-				<input type="date" id="" class="form-control" v-model.lazy="vueGeneral.date" @change="updateGeneral" />
+				<input
+					type="date"
+					id=""
+					class="form-control"
+					v-model.lazy="vueGeneral.date"
+					@change="updateGeneral" />
 				<label for="" class="form-label mt-1">Ведущий игры</label>
-				<input type="text" id="" class="form-control" v-model.lazy="vueGeneral.host" @change="updateGeneral" />
+				<input
+					type="text"
+					id=""
+					class="form-control"
+					v-model.lazy="vueGeneral.host"
+					@change="updateGeneral" />
 
 				<h3 class="mt-3">Конкурсы</h3>
 				<div class="contests mt-2" v-for="(contest, index) in vueContests">
@@ -82,7 +92,12 @@
 						v-model.lazy="contest.name"
 						@change="updateContests" />
 					<label for="" class="form-label mt-1">Максимальное число баллов</label>
-					<input type="text" id="" class="form-control" v-model.lazy="contest.max" @change="updateContests" />
+					<input
+						type="text"
+						id=""
+						class="form-control"
+						v-model.lazy="contest.max"
+						@change="updateContests" />
 				</div>
 				<button class="btn btn-dark mt-2" @click="addContest">
 					<i class="bi bi-plus"></i> Добавить конкурс
@@ -94,7 +109,12 @@
 						><span>ФИО {{ index + 1 }}</span>
 						<i class="bi bi-x-lg" style="cursor: pointer" @click="removeJury(index)"></i
 					></label>
-					<input type="text" id="" class="form-control" v-model.lazy="jury.name" @change="updateJuries" />
+					<input
+						type="text"
+						id=""
+						class="form-control"
+						v-model.lazy="jury.name"
+						@change="updateJuries" />
 					<label for="" class="form-label mt-1">Дополнительная информация на титр</label>
 					<input
 						type="text"
@@ -103,7 +123,9 @@
 						v-model.lazy="jury.description"
 						@change="updateJuries" />
 				</div>
-				<button class="btn btn-dark mt-2" @click="addJury"><i class="bi bi-plus"></i> Добавить жюри</button>
+				<button class="btn btn-dark mt-2" @click="addJury">
+					<i class="bi bi-plus"></i> Добавить жюри
+				</button>
 
 				<h3 class="mt-3">Команды</h3>
 				<div class="teams mt-2" v-for="(team, index) in vueTeams">
@@ -111,7 +133,12 @@
 						><span>Название команды {{ index + 1 }}</span>
 						<i class="bi bi-x-lg" style="cursor: pointer" @click="removeTeam(index)"></i
 					></label>
-					<input type="text" id="" class="form-control" v-model.lazy="team.name" @change="updateTeams" />
+					<input
+						type="text"
+						id=""
+						class="form-control"
+						v-model.lazy="team.name"
+						@change="updateTeams" />
 					<label for="" class="form-label mt-1">Высшая школа / университет</label>
 					<input
 						type="text"
@@ -120,7 +147,9 @@
 						v-model.lazy="team.description"
 						@change="updateTeams" />
 				</div>
-				<button class="btn btn-dark mt-2" @click="addTeam"><i class="bi bi-plus"></i> Добавить команду</button>
+				<button class="btn btn-dark mt-2" @click="addTeam">
+					<i class="bi bi-plus"></i> Добавить команду
+				</button>
 
 				<br />
 				<br />

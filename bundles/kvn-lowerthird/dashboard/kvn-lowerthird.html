@@ -45,12 +45,18 @@
 				<div class="col-7">
 					<h2>Управление состояниями</h2>
 					<div id="status-lt" class="status-bar" :class="tallyStatus">&nbsp;</div>
-					<div v-if="lowerthirdStatus.isOnAir && lowerthirdStatus.timerVisual > 0" class="timer-badge">
+					<div
+						v-if="lowerthirdStatus.isOnAir && lowerthirdStatus.timerVisual > 0"
+						class="timer-badge">
 						Уход через: <strong>{{ lowerthirdStatus.timerVisual }}s</strong>
 					</div>
 					<div class="btn-toolbar mt-3" role="toolbar">
 						<div class="btn-group btn-group-lg me-2" role="group">
-							<button type="button" class="btn btn-light" style="font-size: 1.5rem" @click="takeToAir">
+							<button
+								type="button"
+								class="btn btn-light"
+								style="font-size: 1.5rem"
+								@click="takeToAir">
 								<i class="bi bi-eye"></i> Prepare
 							</button>
 							<button
@@ -104,7 +110,9 @@
 				<div class="col">
 					<h2>Отправлено в титры</h2>
 					<label for="kvn-input-name" class="form-label mt-1">Главная подпись</label>
-					<p id="text-lt" class="fw-normal fs-5" style="color: white">{{ lowerthirdStatus.name }}</p>
+					<p id="text-lt" class="fw-normal fs-5" style="color: white">
+						{{ lowerthirdStatus.name }}
+					</p>
 					<label for="kvn-input-description" class="form-label mt-1">Описание</label>
 					<p id="description-lt" class="fw-normal fs-5" style="color: white">
 						{{ lowerthirdStatus.description }}
@@ -115,10 +123,18 @@
 			<div class="row">
 				<div class="col">
 					<h3>Ведущий</h3>
-					<button type="button" class="btn btn-secondary disabled placeholder" v-if="vueGeneral.host == ''">
+					<button
+						type="button"
+						class="btn btn-secondary disabled placeholder"
+						v-if="vueGeneral.host == ''">
 						Нет данных
 					</button>
-					<button type="button" class="btn btn-secondary" id="host-button" @click="prepareHost" v-else>
+					<button
+						type="button"
+						class="btn btn-secondary"
+						id="host-button"
+						@click="prepareHost"
+						v-else>
 						{{ vueGeneral.host }}
 					</button>
 				</div>
@@ -128,7 +144,10 @@
 				<div class="juries col">
 					<h3 class="mt-3">Жюри</h3>
 					<div class="btn-group-vertical" id="juries-list">
-						<button type="button" class="btn btn-secondary disabled placeholder" v-if="vueJuries == ''">
+						<button
+							type="button"
+							class="btn btn-secondary disabled placeholder"
+							v-if="vueJuries == ''">
 							Нет данных
 						</button>
 						<button
@@ -146,7 +165,10 @@
 				<div class="teams col">
 					<h3 class="mt-3">Команды</h3>
 					<div class="btn-group-vertical">
-						<button type="button" class="btn btn-secondary disabled placeholder" v-if="vueTeams == ''">
+						<button
+							type="button"
+							class="btn btn-secondary disabled placeholder"
+							v-if="vueTeams == ''">
 							Нет данных
 						</button>
 						<button
@@ -170,10 +192,16 @@
 				</div>
 				<div class="col">
 					<label for="kvn-input-description" class="form-label mt-1">Описание</label>
-					<input type="text" id="kvn-input-description" class="form-control" v-model="customDescription" />
+					<input
+						type="text"
+						id="kvn-input-description"
+						class="form-control"
+						v-model="customDescription" />
 				</div>
 			</div>
-			<button class="btn btn-secondary mt-2" @click="sendCustom()">Отправить пользовательский титр</button>
+			<button class="btn btn-secondary mt-2" @click="sendCustom()">
+				Отправить пользовательский титр
+			</button>
 		</div>
 		<script src="/bundles/kvn-file-upload/shared/vendor/vue/vue.global.prod.js"></script>
 		<script

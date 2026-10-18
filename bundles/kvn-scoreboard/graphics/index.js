@@ -237,7 +237,11 @@ createApp({
 
 					if (addEl) gsap.fromTo(addEl, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5 });
 					if (waveEl)
-						gsap.fromTo(waveEl, { left: "-100%" }, { left: "100%", duration: 1, ease: "power2.inOut" });
+						gsap.fromTo(
+							waveEl,
+							{ left: "-100%" },
+							{ left: "100%", duration: 1, ease: "power2.inOut" },
+						);
 
 					gsap.to(this.animatedSums, {
 						[teamId]: newSum,
@@ -338,7 +342,11 @@ createApp({
 
 				// 1. Вторая "финишная" волна
 				if (waveEl) {
-					gsap.fromTo(waveEl, { left: "-100%" }, { left: "100%", duration: 1, ease: "power2.inOut" });
+					gsap.fromTo(
+						waveEl,
+						{ left: "-100%" },
+						{ left: "100%", duration: 1, ease: "power2.inOut" },
+					);
 				}
 
 				// 2. Плавная смена цвета фона (например, на более яркий или золотистый)

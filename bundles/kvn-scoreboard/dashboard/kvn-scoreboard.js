@@ -241,7 +241,9 @@ createApp({
 					if (item.total === 0) return false;
 
 					// Есть ли кто-то с таким же баллом?
-					const hasRivals = scores.some((other) => other.id !== item.id && other.total === item.total);
+					const hasRivals = scores.some(
+						(other) => other.id !== item.id && other.total === item.total,
+					);
 
 					// Равенство есть, а конкретно этой команде голос не дали
 					return hasRivals && item.votes === 0;
@@ -250,28 +252,30 @@ createApp({
 		},
 	},
 	mounted() {
-		NodeCG.waitForReplicants(teamsRep, contestsRep, scoreboardStatusRep, activeSceneRep).then(() => {
-			teamsRep.on("change", (newVal) => {
-				if (newVal) this.vueTeams = JSON.parse(JSON.stringify(newVal)) || [];
+		NodeCG.waitForReplicants(teamsRep, contestsRep, scoreboardStatusRep, activeSceneRep).then(
+			() => {
+				teamsRep.on("change", (newVal) => {
+					if (newVal) this.vueTeams = JSON.parse(JSON.stringify(newVal)) || [];
 
-				newVal.forEach((team) => {
-					if (this.addingPoints[team.id] === undefined) {
-						this.addingPoints[team.id] = "";
-					}
+					newVal.forEach((team) => {
+						if (this.addingPoints[team.id] === undefined) {
+							this.addingPoints[team.id] = "";
+						}
+					});
 				});
-			});
 
-			contestsRep.on("change", (newVal) => {
-				if (newVal) this.vueContests = JSON.parse(JSON.stringify(newVal)) || [];
-			});
+				contestsRep.on("change", (newVal) => {
+					if (newVal) this.vueContests = JSON.parse(JSON.stringify(newVal)) || [];
+				});
 
-			scoreboardStatusRep.on("change", (newVal) => {
-				if (newVal) this.scoreboardStatus = JSON.parse(JSON.stringify(newVal)) || [];
-			});
+				scoreboardStatusRep.on("change", (newVal) => {
+					if (newVal) this.scoreboardStatus = JSON.parse(JSON.stringify(newVal)) || [];
+				});
 
-			activeSceneRep.on("change", (newVal) => {
-				if (newVal) this.activeScene = JSON.parse(JSON.stringify(newVal));
-			});
-		});
+				activeSceneRep.on("change", (newVal) => {
+					if (newVal) this.activeScene = JSON.parse(JSON.stringify(newVal));
+				});
+			},
+		);
 	},
 }).mount("#app");
