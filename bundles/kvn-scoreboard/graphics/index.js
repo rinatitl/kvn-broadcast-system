@@ -267,15 +267,20 @@ createApp({
 				ranks = this.sortedDisplayTeams
 					.map(team => document.getElementById(`team${team.id}`)?.querySelector(".team-rank"))
 					.filter(rank => ranks.includes(rank));
+				const rankDuration = 0.5, rankStagger = 0.1;
+				const waveLead = suspense ? 0.35 : 0;
+				const teamRankIndex = ranks.indexOf(teamEl.querySelector(".team-rank"));
+				const finalWaveStart = suspense ? Math.max(0, teamRankIndex) * rankStagger : 0.2;
 				await play(tl => {
-					if (ranks.length) tl.to(ranks, { opacity: 1, duration: 0.5, stagger: 0.1, ease: "power1.out" }, 0);
+					if (ranks.length) tl.to(ranks, { opacity: 1, duration: rankDuration, stagger: rankStagger, ease: "power1.out" }, waveLead);
 					if (suspense && sumEl) tl.to(sumEl, { opacity: 1, duration: 0.5 }, 0);
 					if (suspense) tl.to(this.animatedSums, {
 						[teamId]: newSum, duration: 0.6, snap: { [teamId]: 1 }, ease: "power1.out",
-					}, 1.15); // Start counting halfway through the 1.3-second wave, as in Next.
-					if (waveEl) tl.fromTo(waveEl, { left: "-100%" }, { left: "100%", duration: suspense ? 1.3 : 1, ease: "power2.inOut" }, suspense ? 0.5 : 0.2);
-					tl.to(teamEl, { backgroundColor: newSum === 0 ? "#F4EBCA" : "#f6d5b2", duration: 0.5 }, 0.7);
-					if (addEl) tl.to(addEl, { opacity: 0, y: -20, duration: 0.6 }, suspense ? 0.9 : 0.6);
+					}, finalWaveStart + 0.65); // Count halfway through the final suspense wave.
+					// Let the original gradient ease in from outside before the rank fades in.
+					if (waveEl) tl.fromTo(waveEl, { left: "-100%" }, { left: "100%", duration: suspense ? 1.3 : 1, ease: "power2.inOut", immediateRender: false }, finalWaveStart);
+					tl.to(teamEl, { backgroundColor: newSum === 0 ? "#F4EBCA" : "#f6d5b2", duration: 0.5 }, suspense ? finalWaveStart + 0.2 : 0.7);
+					if (addEl) tl.to(addEl, { opacity: 0, y: -20, duration: 0.6 }, suspense ? finalWaveStart + 0.4 : 0.6);
 				});
 				if (newSum !== 0 && !this.highlightedTeams.includes(teamId)) this.highlightedTeams.push(teamId);
 				if (newSum === 0) this.highlightedTeams = this.highlightedTeams.filter(id => id !== teamId);

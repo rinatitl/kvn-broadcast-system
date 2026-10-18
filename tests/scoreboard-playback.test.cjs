@@ -120,7 +120,7 @@ for (const moves of [true, false]) {
 				return {
 					timeScale() {}, kill() {},
 					to(target, vars, at) { steps.push({ target, vars, at }); return this; },
-					fromTo(target, from, vars, at) { steps.push({ target, vars, at }); return this; },
+					fromTo(target, from, vars, at) { steps.push({ target, from, vars, at }); return this; },
 					play() {
 						for (const step of steps) {
 							events.push({ ...step, score: app.animatedSums.b, delta: app.teamAdds.b });
@@ -144,6 +144,7 @@ for (const moves of [true, false]) {
 		app.displayTeams = [{ id: "a", sum: 10 }, { id: "b", sum: 5 }, { id: "c", sum: 2 }];
 		app.animatedSums = { a: 10, b: 5, c: 2 };
 		const newSum = moves ? 15 : 7;
+		const movementDuration = mode === "suspense" ? 2.2 : 1.2;
 		await app.runStepByStepAnimation("b", 5, newSum, { id: "job", mode });
 		const delta = events.find(e => e.target === add && e.vars.opacity === 1);
 		assert.equal(delta.delta, newSum - 5);
@@ -152,7 +153,7 @@ for (const moves of [true, false]) {
 		if (rankReveal) {
 			assert.equal(rankReveal.vars.stagger, 0.1);
 			assert.deepEqual(Array.from(rankReveal.target), moves ? [ranks[1], ranks[0]] : ranks.slice(0, 2));
-			const movement = events.findIndex(e => e.vars.duration === (mode === "suspense" ? 2.2 : 1.2));
+			const movement = events.findIndex(e => e.vars.duration === movementDuration);
 			assert.ok(events.indexOf(rankReveal) > movement);
 		}
 		if (mode === "suspense") {
@@ -162,7 +163,7 @@ for (const moves of [true, false]) {
 			assert.equal(rankReveal.target.includes(ranks[2]), false);
 			assert.ok(events.some(e => e.target === sum && e.vars.opacity === 0));
 			assert.equal(hide.score, 5);
-			const movement = events.findIndex(e => e.vars.duration === 2.2);
+			const movement = events.findIndex(e => e.vars.duration === movementDuration);
 			const reveal = events.findIndex(e => e.target === sum && e.vars.opacity === 1);
 			assert.ok(reveal > movement);
 			assert.equal(events[movement].score, 5);
@@ -180,7 +181,9 @@ for (const moves of [true, false]) {
 			assert.ok(Math.abs(hideSum.at - (firstWave.at + firstWave.vars.duration / 2)) < 0.001);
 			assert.ok(hide.at >= firstWave.at + firstWave.vars.duration);
 			const lastWave = events.filter(e => e.target === wave).at(-1);
-			assert.ok(lastWave.at >= events[reveal].at + events[reveal].vars.duration);
+			assert.ok(Math.abs(lastWave.at - (rankReveal.at + rankReveal.target.indexOf(ranks[1]) * rankReveal.vars.stagger - 0.35)) < 1e-10);
+			assert.equal(lastWave.from.left, "-100%");
+			assert.equal(lastWave.vars.ease, "power2.inOut");
 			assert.ok(Math.abs(events[count].at - (lastWave.at + lastWave.vars.duration / 2)) < 0.001);
 		} else {
 			const movement = events.find(e => e.vars.duration === 1.2);
