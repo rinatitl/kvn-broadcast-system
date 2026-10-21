@@ -166,29 +166,74 @@ createApp({
 			gsap.set(".wave-layer", { left: "-100%" });
 		},
 		async resetZeroScores(teams) {
-			const resetIds = teams.filter(team => Number(team.sum) === 0 && this.animatedSums[team.id] !== 0).map(team => team.id);
+			const resetIds = teams.filter(team => Number(team.sum) === 0 && this.animatedSums[team.id] !== 0 && this.animationTargets[team.id] !== 0).map(team => team.id);
 			if (!resetIds.length) return;
 			this.cancelScoreAnimations();
+			const run = { cancelled: false };
+			const key = Symbol("zero-reset");
+			this.scoreRuns.set(key, run);
+			resetIds.forEach(id => { this.animationTargets[id] = 0; });
 			const elements = [...document.querySelectorAll(".element")];
-			const positions = new Map(elements.map(el => [el.id, el.getBoundingClientRect()]));
-			for (const id of resetIds) {
-				const team = this.displayTeams.find(t => t.id === id);
-				if (team) team.sum = 0;
-				this.animatedSums[id] = 0;
-				delete this.teamAdds[id];
-				const el = document.getElementById(`team${id}`);
-				if (el) gsap.set(el, { clearProps: "backgroundColor" });
-			}
-			this.highlightedTeams = this.highlightedTeams.filter(id => !resetIds.includes(id));
-			await this.$nextTick();
-			if (!this.scoreboardStatus.isOnAir) return;
-			for (const el of elements) {
-				const before = positions.get(el.id);
-				const after = el.getBoundingClientRect();
-				const x = before.left - after.left, y = before.top - after.top;
-				if (Math.abs(x) > 0.5 || Math.abs(y) > 0.5) {
-					gsap.fromTo(el, { x, y }, { x: 0, y: 0, duration: 1, ease: "power2.inOut" });
+			const ranks = elements.map(el => el.querySelector(".team-rank")).filter(Boolean);
+			const play = build => new Promise(resolve => {
+				const tl = gsap.timeline({ paused: true, onComplete: resolve });
+				run.cancel = () => { tl.kill(); resolve(); };
+				build(tl);
+				if (run.cancelled) run.cancel();
+				else tl.play();
+			});
+			try {
+				for (const id of resetIds) {
+					delete this.teamAdds[id];
+					const el = document.getElementById(`team${id}`);
+					if (el) gsap.set(el, { clearProps: "backgroundColor" });
 				}
+				this.highlightedTeams = this.highlightedTeams.filter(id => !resetIds.includes(id));
+				if (this.scoreboardStatus.isOnAir && ranks.length) {
+					await play(tl => {
+						tl.to(ranks, { opacity: 0, duration: 0.2 }, 0);
+						tl.to({}, { duration: 0.6 }, 0.2);
+					});
+				}
+				if (run.cancelled) return;
+				const positions = new Map(elements.map(el => [el.id, el.getBoundingClientRect()]));
+				for (const id of resetIds) {
+					const team = this.displayTeams.find(t => t.id === id);
+					if (team) team.sum = 0;
+				}
+				await this.$nextTick();
+				if (run.cancelled || !this.scoreboardStatus.isOnAir) return;
+				await play(tl => {
+					const duration = 1.2;
+					for (const id of resetIds) {
+						tl.to(this.animatedSums, { [id]: 0, duration, snap: { [id]: 1 }, ease: "none" }, 0);
+					}
+					for (const el of elements) {
+						const before = positions.get(el.id);
+						const after = el.getBoundingClientRect();
+						const x = before.left - after.left, y = before.top - after.top;
+						if (Math.abs(x) > 0.5 || Math.abs(y) > 0.5) {
+							tl.fromTo(el, { x, y }, { x: 0, y: 0, duration, ease: "power2.inOut" }, 0);
+						}
+					}
+				});
+				if (run.cancelled) return;
+				const orderedRanks = this.sortedDisplayTeams
+					.map(team => document.getElementById(`team${team.id}`)?.querySelector(".team-rank")).filter(Boolean);
+				if (orderedRanks.length) await play(tl => tl.to(orderedRanks, {
+					opacity: 1, duration: 0.5, stagger: 0.1, ease: "power1.out",
+				}, 0));
+			} finally {
+				for (const id of resetIds) {
+					if (this.animationTargets[id] !== 0) continue;
+					const team = this.displayTeams.find(t => t.id === id);
+					if (team) team.sum = 0;
+					this.animatedSums[id] = 0;
+					delete this.animationTargets[id];
+				}
+				gsap.set(ranks, { opacity: 1 });
+				gsap.set(elements, { clearProps: "transform" });
+				this.scoreRuns.delete(key);
 			}
 		},
 		async runStepByStepAnimation(teamId, oldSum, newSum, command) {
@@ -446,7 +491,7 @@ createApp({
 					const newBackendSum = Number(team.sum) || 0;
 
 					// Do not restart a running animation when unrelated team fields change.
-					if (currentVisualSum !== undefined && newBackendSum != currentVisualSum && this.animationTargets[team.id] !== newBackendSum) {
+					if (newBackendSum !== 0 && currentVisualSum !== undefined && newBackendSum != currentVisualSum && this.animationTargets[team.id] !== newBackendSum) {
 						console.log(`Команда ${team.name} получила баллы: ${newBackendSum}`);
 						this.runStepByStepAnimation(team.id, currentVisualSum, newBackendSum,
 							team.scoreAnimation?.newSum === newBackendSum ? team.scoreAnimation : undefined);

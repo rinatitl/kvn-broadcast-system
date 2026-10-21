@@ -199,11 +199,13 @@ for (const moves of [true, false]) {
 }
 }
 
-test("bulk zero reset moves rows together and clears highlights without score effects", async () => {
+for (const onAir of [true, false]) {
+test(`bulk zero reset hides ranks, counts during movement and reveals ranks in final order (onAir=${onAir})`, async () => {
 	let app;
 	const effects = [];
 	const rows = ["a", "b", "c"].map(id => ({
 		id: `team${id}`,
+		querySelector: () => `rank-${id}`,
 		getBoundingClientRect() {
 			return { left: 0, top: app.sortedDisplayTeams.findIndex(t => t.id === id) * 70 };
 		},
@@ -212,12 +214,27 @@ test("bulk zero reset moves rows together and clears highlights without score ef
 		document: { querySelectorAll: () => rows, getElementById: id => rows.find(row => row.id === id) },
 		gsap: {
 			set: (target, vars) => effects.push({ kind: "set", target, vars }),
-			fromTo: (target, from, vars) => effects.push({ kind: "move", target, from, vars }),
-			timeline() { assert.fail("Reset must not run the scoring timeline"); },
+			timeline({ onComplete }) {
+				const steps = [];
+				return {
+					kill() {},
+					to(target, vars, at) { steps.push({ kind: "to", target, vars, at }); return this; },
+					fromTo(target, from, vars, at) { steps.push({ kind: "move", target, from, vars, at }); return this; },
+					play() {
+						for (const step of steps) {
+							effects.push({ ...step, scores: { ...app.animatedSums } });
+							if (step.target === app.animatedSums) {
+								for (const id of ["a", "b"]) if (id in step.vars) app.animatedSums[id] = step.vars[id];
+							}
+						}
+						queueMicrotask(onComplete);
+					},
+				};
+			},
 		},
 	});
 	app.scoreRuns = new Map();
-	app.scoreboardStatus = { isOnAir: true };
+	app.scoreboardStatus = { isOnAir: onAir };
 	app.displayTeams = [{ id: "a", sum: 30 }, { id: "b", sum: 20 }, { id: "c", sum: 10 }];
 	app.animatedSums = { a: 30, b: 20, c: 10 };
 	app.teamAdds = { a: 5, b: 5 };
@@ -228,7 +245,28 @@ test("bulk zero reset moves rows together and clears highlights without score ef
 	assert.equal(app.animatedSums.b, 0);
 	assert.deepEqual(Array.from(app.highlightedTeams), ["c"]);
 	assert.equal(Object.keys(app.teamAdds).length, 0);
-	assert.equal(effects.filter(e => e.kind === "move").length, 3);
+	assert.equal(effects.filter(e => e.kind === "move").length, onAir ? 3 : 0);
 	assert.ok(effects.filter(e => e.kind === "move").every(e => Object.keys(e.vars).sort().join() === "duration,ease,x,y"));
 	assert.ok(effects.some(e => e.target === rows[0] && e.vars.clearProps === "backgroundColor"));
+	const stages = effects.filter(e => e.kind !== "set");
+	if (onAir) {
+		assert.equal(stages[0].vars.opacity, 0);
+		assert.deepEqual(stages[0].scores, { a: 30, b: 20, c: 10 });
+		const counts = stages.filter(e => e.target === app.animatedSums);
+		assert.equal(counts.length, 2);
+		for (const [i, id] of ["a", "b"].entries()) {
+			assert.equal(counts[i].vars[id], 0);
+			assert.equal(counts[i].vars.snap[id], 1);
+			assert.equal(counts[i].at, 0);
+			assert.ok(stages.filter(e => e.kind === "move").every(e => e.at === 0 && e.vars.duration === counts[i].vars.duration));
+		}
+		const reveal = stages.at(-1);
+		assert.deepEqual(Array.from(reveal.target), ["rank-c", "rank-a", "rank-b"]);
+		assert.equal(reveal.vars.opacity, 1);
+		assert.equal(reveal.vars.stagger, 0.1);
+		assert.deepEqual(reveal.scores, { a: 0, b: 0, c: 10 });
+	} else assert.equal(stages.length, 0);
+	assert.equal(app.scoreRuns.size, 0);
+	assert.equal(Object.keys(app.animationTargets).length, 0);
 });
+}
